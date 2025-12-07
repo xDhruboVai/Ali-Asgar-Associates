@@ -17,10 +17,12 @@ import { HomePage } from "./pages/HomePage";
 import { ProjectDetailPage } from "./pages/ProjectDetailPage";
 import { CategoryPage } from "./pages/CategoryPage";
 import { Toaster } from "./components/ui/sonner";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 export default function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/project/:id" element={<ProjectDetailPage />} />

@@ -160,6 +160,7 @@
 
   body {
     line-height: inherit;
+    overflow-x: hidden;
   }
 
   hr {
