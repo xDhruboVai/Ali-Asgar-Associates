@@ -19,7 +19,7 @@ export function About() {
     "https://images.unsplash.com/photo-1695067438561-75492f7b6a9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmUlMjBidWlsZGluZ3xlbnwxfHx8fDE3NjQ2MDkxMDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
     "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1080",
     "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1080",
-    "https://images.unsplash.com/photo-1469957761306-556935073eba?auto=format&fit=crop&q=80&w=1080",
+    "/41b50319084b13cda5f4ac8ac156f38a.jpg",
     "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=1080"
   ];
 
@@ -100,8 +100,8 @@ export function About() {
                     key={idx}
                     onClick={() => setCurrentImageIndex(idx)}
                     className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentImageIndex
-                        ? "bg-red-500 w-6"
-                        : "bg-white/50 hover:bg-white"
+                      ? "bg-red-500 w-6"
+                      : "bg-white/50 hover:bg-white"
                       }`}
                     aria-label={`Go to slide ${idx + 1}`}
                   />
