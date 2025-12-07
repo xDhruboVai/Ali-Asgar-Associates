@@ -64,6 +64,7 @@ export function CategoryPage() {
   const [category, setCategory] = useState<Category | null>(null);
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [galleryIndex, setGalleryIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
@@ -78,6 +79,11 @@ export function CategoryPage() {
     const filteredProjects = projectsData.filter(p => p.category === categoryId);
     setProjects(filteredProjects);
   }, [categoryId]);
+
+  // Reset gallery index when project changes
+  useEffect(() => {
+    setGalleryIndex(0);
+  }, [selectedIndex]);
 
   const onTouchStart = (e: React.TouchEvent) => {
     setTouchEnd(0);
@@ -139,13 +145,11 @@ export function CategoryPage() {
   };
 
   const nextGalleryImage = () => {
-    const currentGalleryIndex = currentProject.gallery.length > 1 ? (selectedIndex + 1) % currentProject.gallery.length : 0;
-    setSelectedIndex(currentGalleryIndex);
+    setGalleryIndex((prev) => (prev + 1) % currentProject.gallery.length);
   };
 
   const prevGalleryImage = () => {
-    const currentGalleryIndex = currentProject.gallery.length > 1 ? (selectedIndex - 1 + currentProject.gallery.length) % currentProject.gallery.length : 0;
-    setSelectedIndex(currentGalleryIndex);
+    setGalleryIndex((prev) => (prev - 1 + currentProject.gallery.length) % currentProject.gallery.length);
   };
 
   return (
@@ -240,7 +244,7 @@ export function CategoryPage() {
             <div className="space-y-4">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={`${selectedIndex}-${currentProject.gallery.length > 1 ? selectedIndex : 0}`}
+                  key={`${selectedIndex}-${galleryIndex}`}
                   initial={{ opacity: 0, x: 100 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -100 }}
@@ -248,8 +252,8 @@ export function CategoryPage() {
                   className="relative aspect-[4/3] rounded-2xl overflow-hidden group"
                 >
                   <ImageWithFallback
-                    src={currentProject.gallery.length > 1 ? currentProject.gallery[selectedIndex] : currentProject.image}
-                    alt={`${currentProject.title} - Image ${selectedIndex + 1}`}
+                    src={currentProject.gallery[galleryIndex] || currentProject.image}
+                    alt={`${currentProject.title} - Image ${galleryIndex + 1}`}
                     className="w-full h-full object-cover"
                     onTouchStart={onTouchStart}
                     onTouchMove={onTouchMove}
@@ -279,7 +283,7 @@ export function CategoryPage() {
 
                   {/* Gallery Counter */}
                   <div className="absolute bottom-4 right-4 bg-black/70 backdrop-blur-sm px-3 py-1 rounded-full text-white text-sm">
-                    {selectedIndex + 1} / {currentProject.gallery.length}
+                    {galleryIndex + 1} / {currentProject.gallery.length}
                   </div>
                 </motion.div>
               </AnimatePresence>
@@ -289,10 +293,10 @@ export function CategoryPage() {
                 {currentProject.gallery.map((image, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setSelectedIndex(idx)}
-                    className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden transition-all touch-manipulation ${idx === selectedIndex
-                        ? "ring-2 ring-red-500 scale-105"
-                        : "opacity-60 hover:opacity-100"
+                    onClick={() => setGalleryIndex(idx)}
+                    className={`relative flex-shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-lg overflow-hidden transition-all touch-manipulation ${idx === galleryIndex
+                      ? "ring-2 ring-red-500 scale-105"
+                      : "opacity-60 hover:opacity-100"
                       }`}
                   >
                     <ImageWithFallback

@@ -51,7 +51,7 @@ export function Header() {
     }
     setIsMobileMenuOpen(false);
   };
-  
+
   const handleLogoClick = () => {
     if (location.pathname !== "/") {
       navigate("/");
@@ -63,9 +63,8 @@ export function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled ? "bg-[#0a0908]/95 backdrop-blur-sm shadow-md shadow-red-900/10" : "bg-transparent"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? "bg-[#0a0908]/95 backdrop-blur-sm shadow-md shadow-red-900/10" : "bg-transparent"
+        }`}
     >
       <div className="container mx-auto px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
