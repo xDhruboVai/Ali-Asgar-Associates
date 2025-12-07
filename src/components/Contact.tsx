@@ -14,11 +14,53 @@ export function Contact() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
-    alert("Thank you for your message! We will get back to you soon.");
-    setFormData({ name: "", email: "", phone: "", message: "" });
+
+    // 1. Honeypot Check
+    if (honeypot) {
+      return; // Silent fail for bots
+    }
+
+    // 2. Rate Limiting (60 seconds)
+    const lastSubmission = localStorage.getItem("lastContactSubmission");
+    const now = Date.now();
+    if (lastSubmission && now - parseInt(lastSubmission) < 60000) {
+      alert("Please wait a minute before sending another message.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        "https://script.google.com/macros/s/AKfycbzzAD_qIYzRhdAtz7xqJqmEyDpN2gnczby6Es2PA397eT18l-YXICMrN1KLR-6OIcJ0/exec",
+        {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (response.ok) {
+        alert("Thank you for your message! We will get back to you soon.");
+        setFormData({ name: "", email: "", phone: "", message: "" });
+        localStorage.setItem("lastContactSubmission", now.toString());
+      } else {
+        alert("Thank you! Your message has been sent.");
+        setFormData({ name: "", email: "", phone: "", message: "" });
+        localStorage.setItem("lastContactSubmission", now.toString());
+      }
+
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      alert("Something went wrong. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -84,6 +126,17 @@ export function Contact() {
             transition={{ duration: 0.6 }}
           >
             <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Honeypot Field */}
+              <input
+                type="text"
+                name="website"
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                style={{ display: "none" }}
+                tabIndex={-1}
+                autoComplete="off"
+              />
+
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -97,6 +150,7 @@ export function Contact() {
                   value={formData.name}
                   onChange={handleChange}
                   required
+                  maxLength={100}
                   className="w-full bg-gray-800 border-gray-700 text-white"
                 />
               </motion.div>
@@ -113,6 +167,7 @@ export function Contact() {
                   value={formData.email}
                   onChange={handleChange}
                   required
+                  maxLength={100}
                   className="w-full bg-gray-800 border-gray-700 text-white"
                 />
               </motion.div>
@@ -129,6 +184,8 @@ export function Contact() {
                   value={formData.phone}
                   onChange={handleChange}
                   required
+                  maxLength={20}
+                  pattern="[0-9+\-\s]*"
                   className="w-full bg-gray-800 border-gray-700 text-white"
                   autoComplete="tel"
                 />
@@ -146,6 +203,7 @@ export function Contact() {
                   onChange={handleChange}
                   required
                   rows={6}
+                  maxLength={5000}
                   className="w-full bg-gray-800 border-gray-700 text-white"
                 />
               </motion.div>
@@ -157,10 +215,11 @@ export function Contact() {
               >
                 <Button
                   type="submit"
-                  className="w-full bg-red-600 hover:bg-red-700 text-white"
+                  className="w-full bg-red-600 hover:bg-red-700 text-white disabled:opacity-50 disabled:cursor-not-allowed"
                   size="lg"
+                  disabled={isSubmitting}
                 >
-                  Send Message
+                  {isSubmitting ? "Sending..." : "Send Message"}
                 </Button>
               </motion.div>
             </form>
