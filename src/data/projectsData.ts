@@ -414,15 +414,9 @@ export const getProjectsByCategory = (category: string): Project[] => {
   return projectsData.filter(project => project.category === category);
 };
 
-// ==============================================================================
-// CATEGORIES - ADD YOUR OWN!
-// ==============================================================================
-// To add a new category:
-// 1. Copy one of the category objects below
-// 2. Give it a unique "id" (lowercase-with-hyphens)
-// 3. Update the "title" and "description"
-// 4. Add projects with this category ID above
-// ==============================================================================
+/**
+ * Category Definitions
+ */
 
 export const categories = [
   {

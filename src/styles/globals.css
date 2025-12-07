@@ -137,18 +137,21 @@
   body,
   :root {
     /* Warm dark backgrounds */
+    /* Main Background Color */
     --background: #0a0908;
+    /* Main Text Color */
     --foreground: #f2f4f3;
+    /* Card / Testimonial Box Background Color */
     --card: #1a1817;
     --card-foreground: #f2f4f3;
     --popover: #1a1817;
     --popover-foreground: #f2f4f3;
 
-    /* Red primary accent */
+    /* Primary Button & Accent Color (Red) */
     --primary: #DC2626;
     --primary-foreground: #ffffff;
 
-    /* Warm secondary tones */
+    /* Secondary Background Colors */
     --secondary: #2d2623;
     --secondary-foreground: #f2f4f3;
     --muted: #2d2623;
@@ -156,7 +159,7 @@
     --accent: #DC2626;
     --accent-foreground: #ffffff;
 
-    /* Warm beige accent for highlights */
+    /* Warm Accent (Beige) - Used for icons/highlights */
     --warm-accent: #D4C5B9;
     --warm-accent-dark: #8b7e74;
 
