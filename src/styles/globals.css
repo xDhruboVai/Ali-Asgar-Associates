@@ -127,12 +127,12 @@
   body {
     @apply bg-background text-foreground;
   }
-  
+
   /* Force dark mode with warm color palette */
   html {
     color-scheme: dark;
   }
-  
+
   html,
   body,
   :root {
@@ -143,11 +143,11 @@
     --card-foreground: #f2f4f3;
     --popover: #1a1817;
     --popover-foreground: #f2f4f3;
-    
+
     /* Red primary accent */
     --primary: #DC2626;
     --primary-foreground: #ffffff;
-    
+
     /* Warm secondary tones */
     --secondary: #2d2623;
     --secondary-foreground: #f2f4f3;
@@ -155,33 +155,41 @@
     --muted-foreground: #a8a29e;
     --accent: #DC2626;
     --accent-foreground: #ffffff;
-    
+
     /* Warm beige accent for highlights */
     --warm-accent: #D4C5B9;
     --warm-accent-dark: #8b7e74;
-    
+
     --destructive: #DC2626;
     --destructive-foreground: #ffffff;
     --border: #3d3531;
     --input: #2d2623;
     --ring: #DC2626;
   }
-  
+
   /* Hide scrollbar for mobile horizontal scrolling */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
-  
+
   .scrollbar-hide::-webkit-scrollbar {
-    display: none;  /* Chrome, Safari and Opera */
+    display: none;
+    /* Chrome, Safari and Opera */
   }
-  
+
   /* Smooth scrolling for better mobile experience */
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
   }
-  
+
+  body {
+    overflow-x: hidden;
+  }
+
   /* Better touch targets for mobile */
   .touch-manipulation {
     touch-action: manipulation;
