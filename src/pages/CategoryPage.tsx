@@ -173,15 +173,7 @@ export function CategoryPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Button
-              onClick={handleBackToProjects}
-              variant="outline"
-              size="sm"
-              className="mb-4 sm:mb-6 border-white text-white hover:bg-white hover:text-gray-900"
-            >
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to Projects
-            </Button>
+
             <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl mb-3 sm:mb-4 leading-tight">{category.title}</h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-200 max-w-2xl">
               {category.description}
@@ -349,7 +341,7 @@ export function CategoryPage() {
                     <CardContent className="p-4 text-center">
                       <Ruler className="h-5 w-5 text-red-500 mx-auto mb-2" />
                       <p className="text-xs text-gray-400 mb-1">Area</p>
-                      <p className="text-sm text-white">{currentProject.area.split(' ')[0]}</p>
+                      <p className="text-sm text-white">{currentProject.area}</p>
                     </CardContent>
                   </Card>
                 </div>

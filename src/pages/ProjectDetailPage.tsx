@@ -97,12 +97,7 @@ export function ProjectDetailPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <Link to="/#projects" onClick={handleBackToProjects}>
-              <Button variant="outline" className="mb-6 border-white text-white hover:bg-white hover:text-gray-900">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Projects
-              </Button>
-            </Link>
+
             <Badge className="bg-red-600 mb-4">{project.type}</Badge>
             <h1 className="text-3xl md:text-5xl lg:text-6xl mb-4">{project.title}</h1>
             <div className="flex flex-wrap items-center gap-4 text-sm md:text-base">

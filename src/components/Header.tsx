@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Building2, Menu, X } from "lucide-react";
+import { Building2, Menu, X, ArrowLeft } from "lucide-react";
 import { Button } from "./ui/button";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -68,16 +68,27 @@ export function Header() {
     >
       <div className="container mx-auto px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
-          <button
-            onClick={handleLogoClick}
-            className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-          >
-            <Building2 className="h-6 w-6 sm:h-8 sm:w-8 text-red-600 flex-shrink-0" />
-            <div className="text-white">
-              <div className="text-sm sm:text-lg md:text-xl leading-tight">ALI ASGAR & ASSOCIATES</div>
-              <div className="text-xs sm:text-sm text-[#D4C5B9] leading-tight">Consulting Engineering & Planning</div>
-            </div>
-          </button>
+          <div className="flex items-center gap-2 sm:gap-4">
+            {location.pathname !== "/" && (
+              <button
+                onClick={() => scrollToSection("projects")}
+                className="text-white hover:text-red-500 transition-colors p-1"
+                aria-label="Back to Projects"
+              >
+                <ArrowLeft className="h-6 w-6 sm:h-8 sm:w-8" />
+              </button>
+            )}
+            <button
+              onClick={handleLogoClick}
+              className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+            >
+              <Building2 className="h-6 w-6 sm:h-8 sm:w-8 text-red-600 flex-shrink-0" />
+              <div className="text-white">
+                <div className="text-sm sm:text-lg md:text-xl leading-tight">ALI ASGAR & ASSOCIATES</div>
+                <div className="text-xs sm:text-sm text-[#D4C5B9] leading-tight">Consulting Engineering & Planning</div>
+              </div>
+            </button>
+          </div>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-6 lg:gap-8">
