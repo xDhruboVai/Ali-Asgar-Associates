@@ -44,7 +44,6 @@ export const projectsData: Project[] = [
     duration: "24 months",
     gallery: [
       "https://images.unsplash.com/photo-1672508013582-035e75fb76ec?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZXNpZGVudGlhbCUyMGJ1aWxkaW5nJTIwZXh0ZXJpb3J8ZW58MXx8fHwxNzY0NjY4MDkyfDA&ixlib=rb-4.1.0&q=80&w=1080",
-      "/Data/Categories/Luxury Residential Complex/Project 2/images.png",
       "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3NjQ2OTE1Njl8MA&ixlib=rb-4.1.0&q=80&w=1080",
       "https://images.unsplash.com/photo-1493809842364-78817add7ffb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb29mdG9wJTIwZ2FyZGVufGVufDF8fHx8MTc2NDY5MTYwNXww&ixlib=rb-4.1.0&q=80&w=1080",
     ],
@@ -236,7 +235,6 @@ export const projectsData: Project[] = [
     gallery: [
       "https://images.unsplash.com/photo-1638207849658-e57be0cdc208?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjaXZpbCUyMGVuZ2luZWVyaW5nJTIwY29uc3RydWN0aW9ufGVufDF8fHx8MTc2NDY4NzIyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
       "https://images.unsplash.com/photo-1581094794329-c8112a89af12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyb2FkJTIwY29uc3RydWN0aW9ufGVufDF8fHx8MTc2NDY5MTcyN3ww&ixlib=rb-4.1.0&q=80&w=1080",
-      "/Data/Categories/Luxury Residential Complex/Project 2/images.png",
     ],
     features: [
       "Modern road network design",

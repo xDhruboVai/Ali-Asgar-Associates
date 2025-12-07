@@ -1,8 +1,11 @@
+import { useState, useEffect } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { ImageWithFallback } from "./ui/image-with-fallback";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 
 export function About() {
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
   const features = [
     "Licensed and certified professionals",
     "Quality materials and construction practices",
@@ -11,6 +14,21 @@ export function About() {
     "Comprehensive warranty coverage",
     "Sustainable building solutions",
   ];
+
+  const aboutImages = [
+    "https://images.unsplash.com/photo-1695067438561-75492f7b6a9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmUlMjBidWlsZGluZ3xlbnwxfHx8fDE3NjQ2MDkxMDF8MA&ixlib=rb-4.1.0&q=80&w=1080",
+    "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1080",
+    "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1080",
+    "https://images.unsplash.com/photo-1469957761306-556935073eba?auto=format&fit=crop&q=80&w=1080",
+    "https://images.unsplash.com/photo-1541888946425-d81bb19240f5?auto=format&fit=crop&q=80&w=1080"
+  ];
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentImageIndex((prev) => (prev + 1) % aboutImages.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <section id="about" className="py-16 md:py-20 bg-[#0a0908]">
@@ -47,6 +65,7 @@ export function About() {
               ))}
             </div>
           </motion.div>
+
           <motion.div
             initial={{ opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -54,13 +73,42 @@ export function About() {
             transition={{ duration: 0.8 }}
             className="relative"
           >
-            <div className="aspect-[4/3] rounded-lg overflow-hidden shadow-2xl">
-              <ImageWithFallback
-                src="https://images.unsplash.com/photo-1695067438561-75492f7b6a9c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcmNoaXRlY3R1cmUlMjBidWlsZGluZ3xlbnwxfHx8fDE3NjQ2MDkxMDF8MA&ixlib=rb-4.1.0&q=80&w=1080"
-                alt="Modern architecture building"
-                className="w-full h-full object-cover"
-              />
+            <div className="relative aspect-[4/3] rounded-lg overflow-hidden shadow-2xl group">
+              <AnimatePresence mode="popLayout" initial={false}>
+                <motion.div
+                  key={currentImageIndex}
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.6, ease: "easeInOut" }}
+                  className="absolute inset-0 w-full h-full"
+                >
+                  <ImageWithFallback
+                    src={aboutImages[currentImageIndex]}
+                    alt={`Modern architecture slideshow ${currentImageIndex + 1}`}
+                    className="w-full h-full object-cover"
+                  />
+                  {/* Overlay for better text contrast if needed, mostly for aesthetics */}
+                  <div className="absolute inset-0 bg-black/10"></div>
+                </motion.div>
+              </AnimatePresence>
+
+              {/* Slideshow Indicators */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                {aboutImages.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setCurrentImageIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentImageIndex
+                        ? "bg-red-500 w-6"
+                        : "bg-white/50 hover:bg-white"
+                      }`}
+                    aria-label={`Go to slide ${idx + 1}`}
+                  />
+                ))}
+              </div>
             </div>
+
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
