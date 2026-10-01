@@ -4,7 +4,9 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { ViewTransition } from 'react'
 import { ClosingCta } from '@/components/ClosingCta'
-import { ProjectCard, ProjectMeta } from '@/components/ProjectCard'
+import { ProjectCard, ProjectMeta, shortLocation } from '@/components/ProjectCard'
+import { Eyebrow } from '@/components/Ui'
+import { Words } from '@/components/Words'
 import { getProject, getProjects } from '@/lib/data'
 import { categoryLabel, titleCase } from '@/lib/normalize'
 import type { Project } from '@/lib/types'
@@ -65,12 +67,17 @@ export default async function ProjectPage(props: PageProps<'/projects/[slug]'>) 
   const related = projects
     .filter((p) => p.slug !== project.slug && p.images.length && p.categories.includes(primary))
     .slice(0, 3)
+  // Next in the list among fully described projects with pictures.
+  const illustrated = projects.filter((p) => p.images.length && (!p.detailsPending || p.slug === project.slug))
+  const position = illustrated.findIndex((p) => p.slug === project.slug)
+  const next = illustrated.length > 1 ? illustrated[(position + 1) % illustrated.length] : null
+  const place = shortLocation(project.address)
 
   return (
     <article>
-      <header className="page-head case-head blueprint">
+      <header className="page-head case-head">
         <div className="container">
-          <nav aria-label="Breadcrumb" className="breadcrumb">
+          <nav aria-label="Breadcrumb" className="breadcrumb" data-reveal>
             <ol>
               <li>
                 <Link href="/projects">Projects</Link>
@@ -78,76 +85,97 @@ export default async function ProjectPage(props: PageProps<'/projects/[slug]'>) 
               <li>
                 <Link href={`/projects?category=${primary}`}>{categoryLabel(primary)}</Link>
               </li>
+              <li aria-current="page">{project.name}</li>
             </ol>
           </nav>
-          <h1>
-            <span className="line">
-              <span>{project.name}</span>
-            </span>
+          <h1 className="page-head__title case-head__title">
+            <Words text={project.name} mode="load" delay={0.1} />
           </h1>
-          <ProjectMeta project={project} />
+          <div className="case-head__foot">
+            <span className="rule" data-line aria-hidden="true" />
+            <div data-reveal>
+              <ProjectMeta project={project} />
+            </div>
+            {place ? (
+              <p className="case-head__place" data-reveal>
+                {place}
+              </p>
+            ) : null}
+          </div>
         </div>
       </header>
 
       <div className="case-hero">
-        <div className="container">
-          {lead ? (
-            <div className="case-hero__frame">
-              <Image src={lead.src} alt="" fill sizes="20vw" quality={75} className="case-hero__backdrop" aria-hidden />
+        {lead ? (
+          <div className="case-hero__frame" data-expand>
+            <Image src={lead.src} alt="" fill sizes="20vw" quality={75} className="case-hero__backdrop" aria-hidden />
+            <div className="case-hero__picture">
               <ViewTransition name={`project-${project.slug}`} share="project-image" default="none">
-                <Image src={lead.src} alt={lead.alt} fill priority sizes="(min-width: 1440px) 1330px, 94vw" quality={85} />
+                <Image src={lead.src} alt={lead.alt} fill priority sizes="100vw" quality={85} />
               </ViewTransition>
             </div>
-          ) : (
+          </div>
+        ) : (
+          <div className="container">
             <div className="no-image">
               <p>No images have been published for this project yet.</p>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
 
       <section className="section" aria-labelledby="overview-title">
         <div className="container case-overview">
-          <div className="stack" data-reveal>
-            <h2 id="overview-title" className="label label--tick">
-              Project overview
-            </h2>
-            {project.description ? <p className="case-overview__lead">{project.description}</p> : null}
+          <div className="case-overview__intro">
+            <Eyebrow as="h2">
+              <span id="overview-title">Project overview</span>
+            </Eyebrow>
+            {project.description ? (
+              <p className="case-overview__lead">
+                <Words text={project.description} />
+              </p>
+            ) : null}
             {project.structuralSystem || project.earthquakeZone ? (
-              <p className="muted">All design and standards as per the Bangladesh National Building Code (BNBC).</p>
+              <p className="muted" data-reveal>
+                All design and standards as per the Bangladesh National Building Code (BNBC).
+              </p>
             ) : null}
             {project.assessmentNote ? (
-              <p className="note">
+              <p className="note" data-reveal>
                 The firm has also carried out a structural assessment of this building and prepared as-built drawings.
               </p>
             ) : null}
             {project.detailsPending ? (
-              <p className="note">Further details for this project have not been published yet.</p>
+              <p className="note" data-reveal>
+                Further details for this project have not been published yet.
+              </p>
             ) : null}
           </div>
 
-          <dl className="spec" data-reveal style={{ '--d': 2 } as React.CSSProperties}>
-            {specs.map(([term, value]) => (
-              <div key={term}>
-                <dt>{term}</dt>
-                <dd>{value}</dd>
-              </div>
-            ))}
-          </dl>
+          {specs.length ? (
+            <dl className="schedule">
+              {specs.map(([term, value]) => (
+                <div key={term} data-reveal>
+                  <dt>{term}</dt>
+                  <dd>{value}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : null}
         </div>
       </section>
 
       {moreImages.length ? (
-        <section className="section section--tight section--gray" aria-labelledby="gallery-title">
+        <section className="section section--tight" aria-labelledby="gallery-title">
           <div className="container">
-            <h2 id="gallery-title" className="label label--tick" style={{ marginBottom: 24 }}>
-              Gallery
-            </h2>
+            <Eyebrow as="h2">
+              <span id="gallery-title">Gallery</span>
+            </Eyebrow>
             <ul className="gallery">
               {moreImages.map((image) => (
                 <li key={image.src}>
-                  <figure>
-                    <div className="gallery__frame" data-reveal="image">
+                  <figure className="gallery__frame" data-clip>
+                    <div className="gallery__plx" data-parallax="0.12">
                       <Image src={image.src} alt={image.alt} fill sizes="(min-width: 960px) 50vw, 100vw" />
                     </div>
                   </figure>
@@ -158,23 +186,39 @@ export default async function ProjectPage(props: PageProps<'/projects/[slug]'>) 
         </section>
       ) : null}
 
+      {next ? (
+        <Link href={`/projects/${next.slug}`} className="next-project" data-cursor="Next">
+          <span className="container next-project__inner">
+            <span className="next-project__label">Next project</span>
+            <span className="next-project__name">{next.name}</span>
+            <span className="next-project__meta">
+              {next.categories.map(categoryLabel).join(' + ')}
+              {shortLocation(next.address) ? ` / ${shortLocation(next.address)}` : ''}
+            </span>
+          </span>
+          <span className="next-project__image" aria-hidden="true">
+            <Image src={next.images[0].src} alt="" fill sizes="40vw" />
+          </span>
+        </Link>
+      ) : null}
+
       {related.length ? (
-        <section className="section section--gray" aria-labelledby="related-title">
+        <section className="section related" aria-labelledby="related-title">
           <div className="container">
-            <div className="section-head">
-              <h2 id="related-title" data-reveal>
-                More {categoryLabel(primary).toLowerCase()} projects
+            <div className="sec-head">
+              <h2 id="related-title" className="h2">
+                <Words text={`More ${categoryLabel(primary).toLowerCase()} *projects*`} />
               </h2>
               <p data-reveal>
-                <Link href={`/projects?category=${primary}`} className="arrow-link">
+                <Link href={`/projects?category=${primary}`} className="text-link">
                   All {categoryLabel(primary).toLowerCase()} projects
                 </Link>
               </p>
             </div>
-            <ul className="project-grid">
+            <ul className="project-grid project-grid--static">
               {related.map((p, i) => (
-                <li key={p.slug} data-reveal style={{ '--d': i } as React.CSSProperties}>
-                  <ProjectCard project={p} />
+                <li key={p.slug}>
+                  <ProjectCard project={p} index={String(i + 1).padStart(2, '0')} />
                 </li>
               ))}
             </ul>

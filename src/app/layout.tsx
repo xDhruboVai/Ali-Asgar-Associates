@@ -1,7 +1,8 @@
 import type { Metadata, Viewport } from 'next'
-import { Archivo, Geist_Mono } from 'next/font/google'
+import { Archivo, Geist_Mono, Instrument_Serif } from 'next/font/google'
 import { ViewTransition } from 'react'
-import { CursorLabel, ScrollReveal } from '@/components/Motion'
+import { Cursor } from '@/components/Cursor'
+import { Motion } from '@/components/Motion'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
 import { getCompany } from '@/lib/data'
@@ -22,6 +23,15 @@ const geistMono = Geist_Mono({
   display: 'swap',
 })
 
+// One italic accent per headline; never used for body text.
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  weight: '400',
+  style: 'italic',
+  variable: '--font-instrument',
+  display: 'swap',
+})
+
 export async function generateMetadata(): Promise<Metadata> {
   const company = await getCompany()
   const name = titleCase(company.name)
@@ -36,17 +46,28 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#ffffff',
+  themeColor: '#f2f0ea',
 }
+
+/**
+ * Runs before paint. `motion` enables the hidden starting states of the
+ * entrance animations; it is never added under reduced motion, and it is
+ * removed again if the motion script has not started within three seconds,
+ * so content can never stay hidden.
+ */
+const MOTION_BOOT = `(function(d){var h=d.documentElement;h.classList.add('js');if(!matchMedia('(prefers-reduced-motion: reduce)').matches){h.classList.add('motion');setTimeout(function(){if(!h.classList.contains('motion-ready'))h.classList.remove('motion')},3000)}})(document)`
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const company = await getCompany()
 
   return (
-    <html lang="en" className={`${archivo.variable} ${geistMono.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${archivo.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
+      suppressHydrationWarning
+    >
       <head>
-        {/* Scroll-reveal styles only hide content once scripting is confirmed. */}
-        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+        <script dangerouslySetInnerHTML={{ __html: MOTION_BOOT }} />
       </head>
       <body>
         <a href="#main" className="skip-link">
@@ -61,8 +82,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ViewTransition>{children}</ViewTransition>
         </main>
         <SiteFooter />
-        <ScrollReveal />
-        <CursorLabel />
+        <Motion />
+        <Cursor />
       </body>
     </html>
   )

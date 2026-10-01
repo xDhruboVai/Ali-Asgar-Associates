@@ -1,9 +1,11 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { getCompany, getLicenses } from '@/lib/data'
 import { phoneLinks, titleCase } from '@/lib/normalize'
 import { NAV_ITEMS, TAGLINE } from '@/lib/site'
+import { SheetLabel } from './SheetLabel'
+import { withAmpersand } from './Words'
 
+/** The footer is drawn as the title block of a drawing sheet. */
 export async function SiteFooter() {
   const [company, licenses] = await Promise.all([getCompany(), getLicenses()])
   const name = titleCase(company.name)
@@ -13,30 +15,23 @@ export async function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="container">
-        <div className="site-footer__grid">
-          <div className="stack">
-            <span className="site-footer__logo">
-              <Image src="/logo.webp" alt="" width={373} height={215} />
-            </span>
+        <p className="site-footer__mark" aria-hidden="true">
+          {withAmpersand(name)}
+        </p>
+
+        <div className="title-block">
+          <div className="title-block__cell title-block__cell--wide">
+            <h2 className="tb-label">Practice</h2>
             <p className="site-footer__name">{name}</p>
             <p>
               {TAGLINE}
-              {company.established_year ? (
-                <>
-                  <br />
-                  Established {company.established_year}
-                </>
-              ) : null}
-            </p>
-            <p style={{ maxWidth: '40ch' }}>
-              Architectural, structural and building-services design, engineering assessment and turnkey
-              construction, from Dhaka.
+              {company.established_year ? ` · Est. ${company.established_year}` : ''}
             </p>
           </div>
 
-          <div>
-            <h2 className="label">Office</h2>
-            <address className="stack-sm">
+          <div className="title-block__cell title-block__cell--wide">
+            <h2 className="tb-label">Office</h2>
+            <address>
               {company.address ? <p>{titleCase(company.address)}</p> : null}
               {phone ? (
                 <p>
@@ -51,8 +46,8 @@ export async function SiteFooter() {
             </address>
           </div>
 
-          <nav aria-label="Footer">
-            <h2 className="label">Explore</h2>
+          <nav className="title-block__cell" aria-label="Footer">
+            <h2 className="tb-label">Index</h2>
             <ul>
               <li>
                 <Link href="/">Home</Link>
@@ -65,24 +60,29 @@ export async function SiteFooter() {
             </ul>
           </nav>
 
-          <div>
-            <h2 className="label">New project</h2>
-            <Link href="/contact" className="button button--small">
-              Start a project
-            </Link>
+          <div className="title-block__cell">
+            <h2 className="tb-label">Sheet</h2>
+            <SheetLabel />
           </div>
-        </div>
 
-        <div className="site-footer__base">
-          <p>
-            © {new Date().getFullYear()} {name}
-          </p>
-          {tradeLicense?.license_number ? (
+          <div className="title-block__cell">
+            <h2 className="tb-label">Scale</h2>
+            <p className="tb-value">1 : 1</p>
+          </div>
+
+          <div className="title-block__cell title-block__cell--long">
+            <h2 className="tb-label">Registration</h2>
             <p>
-              {tradeLicense.license_type} {tradeLicense.license_number}
-              {tradeLicense.authority ? `, ${tradeLicense.authority}` : ''}
+              {tradeLicense?.license_number
+                ? `${tradeLicense.license_type} ${tradeLicense.license_number}${tradeLicense.authority ? `, ${tradeLicense.authority}` : ''}`
+                : 'Dhaka, Bangladesh'}
             </p>
-          ) : null}
+          </div>
+
+          <div className="title-block__cell">
+            <h2 className="tb-label">Rev.</h2>
+            <p className="tb-value">© {new Date().getFullYear()}</p>
+          </div>
         </div>
       </div>
     </footer>

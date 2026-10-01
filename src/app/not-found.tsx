@@ -1,18 +1,24 @@
 import Link from 'next/link'
+import { BtnLabel, PageHead } from '@/components/Ui'
 
 export default function NotFound() {
   return (
-    <section className="page-head blueprint" style={{ minHeight: '70svh' }}>
-      <div className="container stack">
-        <p className="label label--tick">404</p>
-        <h1>Page not found</h1>
-        <p className="lede">The page you were looking for does not exist or has moved.</p>
-        <p>
-          <Link href="/projects" className="button">
-            Explore projects
+    <div className="fallback">
+      <PageHead
+        sheet="—"
+        eyebrow="404"
+        title="Page not *found.*"
+        lede={<p>The page you were looking for does not exist or has moved.</p>}
+      >
+        <p className="fallback__actions" data-reveal>
+          <Link href="/projects" className="btn btn--ink" data-magnetic="0.25">
+            <BtnLabel>Explore projects</BtnLabel>
+          </Link>
+          <Link href="/" className="text-link">
+            Home
           </Link>
         </p>
-      </div>
-    </section>
+      </PageHead>
+    </div>
   )
 }

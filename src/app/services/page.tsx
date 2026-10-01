@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { ClosingCta } from '@/components/ClosingCta'
 import { Journey } from '@/components/Journey'
-import { ServiceIcon } from '@/components/ServiceIcon'
+import { PageHead } from '@/components/Ui'
+import { Words } from '@/components/Words'
 import { getProjects } from '@/lib/data'
 import { categoryLabel } from '@/lib/normalize'
 import { SERVICES } from '@/lib/services'
@@ -21,80 +22,87 @@ export default async function ServicesPage() {
 
   return (
     <>
-      <header className="page-head blueprint">
-        <div className="container page-head__grid">
-          <div>
-            <p className="label label--tick">What we do</p>
-            <h1>
-              <span className="line">
-                <span>Services</span>
-              </span>
-            </h1>
-          </div>
-          <div className="stack">
-            <p className="lede">
-              Complete design consultancy first, through to construction on a turnkey basis. Each service can be
-              taken on its own or as part of one integrated project.
-            </p>
-            <nav aria-label="Services on this page">
-              <ul className="tag-list">
-                {SERVICES.map((s) => (
-                  <li key={s.id}>
-                    <a href={`#${s.id}`} style={{ borderColor: 'rgba(255,255,255,0.3)' }}>
-                      {s.name}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-        </div>
-      </header>
+      <PageHead
+        sheet="A-200"
+        eyebrow="What we do"
+        title="Services"
+        lede={
+          <p>
+            Complete design consultancy first, through to construction on a turnkey basis. Each service can be taken on
+            its own or as part of one integrated project.
+          </p>
+        }
+      >
+        <nav className="jump-nav" aria-label="Services on this page" data-reveal>
+          <ol>
+            {SERVICES.map((s, i) => (
+              <li key={s.id}>
+                <a href={`#${s.id}`}>
+                  <span>{String(i + 1).padStart(2, '0')}</span>
+                  {s.name}
+                </a>
+              </li>
+            ))}
+          </ol>
+        </nav>
+      </PageHead>
 
       <div className="container">
-        {SERVICES.map((service) => {
+        {SERVICES.map((service, i) => {
           const related = service.relatedCategories
             .map((id) => ({ id, label: categoryLabel(id), count: countFor(id) }))
             .filter((r) => r.count > 0)
 
           return (
-            <section key={service.id} id={service.id} className="service-block" aria-labelledby={`${service.id}-title`}>
-              <div className="service-block__head" data-reveal>
-                <ServiceIcon id={service.id} className="service-block__icon" />
-                <h2 id={`${service.id}-title`}>{service.name}</h2>
-                <p className="lede">{service.summary}</p>
+            <section key={service.id} id={service.id} className="svc-block" aria-labelledby={`${service.id}-title`}>
+              <span className="rule svc-block__rule" data-line aria-hidden="true" />
+              <div className="svc-block__aside">
+                <span className="svc-block__num" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <h2 id={`${service.id}-title`} className="svc-block__title">
+                  <Words text={service.name} />
+                </h2>
               </div>
 
-              <div className="stack-lg" data-reveal style={{ '--d': 2 } as React.CSSProperties}>
-                <ul className="checklist">
+              <div className="svc-block__body">
+                <p className="svc-block__lede" data-reveal>
+                  {service.summary}
+                </p>
+
+                <ul className="points">
                   {service.points.map((point) => (
-                    <li key={point}>{point}</li>
+                    <li key={point} data-reveal>
+                      {point}
+                    </li>
                   ))}
                 </ul>
 
                 {service.disciplines ? (
-                  <div className="stack-sm">
-                    <h3 className="label">Disciplines</h3>
-                    <ul className="disciplines">
+                  <div className="svc-block__group">
+                    <h3 className="mono-label" data-reveal>
+                      Disciplines
+                    </h3>
+                    <dl className="schedule schedule--two">
                       {service.disciplines.map((d) => (
-                        <li key={d.name}>
-                          <strong>{d.name}</strong>
-                          <span>{d.summary}</span>
-                        </li>
+                        <div key={d.name} data-reveal>
+                          <dt>{d.name}</dt>
+                          <dd>{d.summary}</dd>
+                        </div>
                       ))}
-                    </ul>
+                    </dl>
                   </div>
                 ) : null}
 
                 {related.length ? (
-                  <div className="stack-sm">
-                    <h3 className="label">Related projects</h3>
-                    <ul className="tag-list">
+                  <div className="svc-block__group" data-reveal>
+                    <h3 className="mono-label">Related projects</h3>
+                    <ul className="sector-links">
                       {related.map((r) => (
                         <li key={r.id}>
                           <Link href={`/projects?category=${r.id}`}>
                             {r.label}
-                            <span>{r.count}</span>
+                            <sup>{r.count}</sup>
                           </Link>
                         </li>
                       ))}
@@ -107,20 +115,7 @@ export default async function ServicesPage() {
         })}
       </div>
 
-      <section className="section section--dark blueprint" aria-labelledby="journey-title">
-        <div className="container">
-          <div className="section-head" style={{ marginBottom: 0 }}>
-            <div className="stack" data-reveal>
-              <p className="label label--tick">Turnkey</p>
-              <h2 id="journey-title">One firm, from planning to completion.</h2>
-            </div>
-            <p className="lede" data-reveal>
-              When the services are taken together, the same office plans, designs, engineers and builds the project.
-            </p>
-          </div>
-          <Journey />
-        </div>
-      </section>
+      <Journey lede="When the services are taken together, the same office plans, designs, engineers and builds the project." />
 
       <ClosingCta />
     </>

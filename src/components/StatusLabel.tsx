@@ -1,3 +1,4 @@
 export function StatusLabel({ status }: { status: string }) {
-  return <span className="status">{status}</span>
+  const live = /^(ongoing|planning)$/i.test(status.trim())
+  return <span className={live ? 'status status--live' : 'status'}>{status}</span>
 }

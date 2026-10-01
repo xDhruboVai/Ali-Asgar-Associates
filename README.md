@@ -40,12 +40,26 @@ Pages are generated statically and refreshed from Supabase at most once an hour.
 
 ## Design and motion
 
-- Palette from the logo: white and light gray surfaces, near-black, one red accent (`--red` in `src/app/globals.css`).
-- Type: Archivo (variable width; condensed for display) and Geist Mono for small technical labels.
-- Motion uses CSS only, plus one small observer (`src/components/Motion.tsx`) that reveals `[data-reveal]`
-  elements on scroll. Page transitions and the card-to-case-study image morph use React `<ViewTransition>`.
-  No animation library is installed. Everything is disabled under `prefers-reduced-motion`.
-- Content hidden for scroll reveal is only hidden once JavaScript has run (`.js` class on `<html>`).
+"Drawn, then built": the site is laid out like a drawing sheet.
+
+- Palette from the logo: warm drafting-paper surfaces, ink, one red accent (`--red` in `src/app/globals.css`).
+- Type: Archivo (variable width, condensed for display), an Instrument Serif italic for one accent per
+  headline, and Geist Mono for annotations (sheet numbers, labels, metadata). Each page has a sheet
+  number (A-000 home, A-100 projects …) shown in the head and in the footer's title block.
+- Imagery is only the firm's own project renders from Supabase. The home hero stands five of them on a
+  ground line, like an elevation.
+- Motion: GSAP with ScrollTrigger, and Lenis for smooth scrolling (the only smooth-scroll engine).
+  `src/components/Motion.tsx` holds the whole system; markup opts in with data attributes
+  (`data-words`, `data-reveal`, `data-line`, `data-clip`, `data-parallax`, `data-speed`, `data-expand`,
+  `data-count`, `data-hscroll`, `data-marquee`). Headings are split into words on the server by
+  `<Words>`, so screen readers get the unsplit text and nothing depends on JavaScript.
+  `Hero.tsx` runs the opening sequence; `Cursor.tsx` adds the "View" label and magnetic buttons on fine
+  pointers. Page transitions and the card-to-case-study image morph use React `<ViewTransition>`.
+- Under `prefers-reduced-motion` no animation or smooth scrolling runs and everything renders in its
+  final state; the pinned turnkey journey becomes a grid and the client marquee a wrapped list.
+- Hidden starting states only apply under the `motion` class, which the head script removes again if
+  the motion script has not started within three seconds.
+- No Three.js: shader distortion would warp the building renders, which need to read accurately.
 
 ## Where content comes from
 
