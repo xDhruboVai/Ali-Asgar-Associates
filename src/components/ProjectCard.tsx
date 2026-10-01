@@ -1,5 +1,6 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import { ViewTransition } from 'react'
 import { categoryLabel } from '@/lib/normalize'
 import type { Project } from '@/lib/types'
 import { StatusLabel } from './StatusLabel'
@@ -13,30 +14,49 @@ type Props = {
 
 export function ProjectCard({
   project,
-  sizes = '(min-width: 1040px) 30vw, (min-width: 640px) 45vw, 100vw',
+  sizes = '(min-width: 1040px) 33vw, (min-width: 640px) 50vw, 100vw',
   priority = false,
   headingLevel: Heading = 'h3',
 }: Props) {
   const image = project.images[0]
-  const location = shortLocation(project.address)
 
   return (
-    <article className="card">
+    <article className="card" data-cursor="View">
       <div className="card__media">
-        {image ? <Image src={image.src} alt={image.alt} fill sizes={sizes} priority={priority} /> : null}
+        {image ? (
+          // Same name as the case-study hero, so the picture morphs between pages.
+          <ViewTransition name={`project-${project.slug}`} share="project-image" default="none">
+            <Image src={image.src} alt={image.alt} fill sizes={sizes} priority={priority} />
+          </ViewTransition>
+        ) : null}
       </div>
-      <div className="card__body">
+      <div className="card__info">
         <Heading className="card__title">
           <Link href={`/projects/${project.slug}`}>{project.name}</Link>
         </Heading>
-        <p className="card__meta">
-          <span>{project.categories.map(categoryLabel).join(' · ')}</span>
-          {location ? <span>{location}</span> : null}
-          {project.status ? <StatusLabel status={project.status} /> : null}
-        </p>
-        {project.description ? <p className="card__desc">{project.description}</p> : null}
+        <ProjectMeta project={project} />
+        {project.description ? (
+          <p className="card__desc">
+            <span>{project.description}</span>
+          </p>
+        ) : null}
+        <span className="card__arrow" aria-hidden="true">
+          →
+        </span>
       </div>
     </article>
+  )
+}
+
+/** Type / location / status line. */
+export function ProjectMeta({ project }: { project: Project }) {
+  const location = shortLocation(project.address)
+  return (
+    <p className="meta">
+      <span>{project.categories.map(categoryLabel).join(' + ')}</span>
+      {location ? <span>{location}</span> : null}
+      {project.status ? <StatusLabel status={project.status} /> : null}
+    </p>
   )
 }
 
@@ -48,5 +68,8 @@ export function shortLocation(address: string | null): string | null {
     .map((p) => p.trim().replace(/\.$/, ''))
     .filter((p) => p && !/^(plot|house|road|block|apt|sector|section|flat|dag|cs dag|ploit)\b/i.test(p) && !/\d/.test(p))
   const pair = parts.slice(-2).join(', ')
-  return (pair.length > 30 ? parts.at(-1) : pair) || null
+  if (pair.length <= 30) return pair || null
+  // Addresses stored without commas: keep the last two words, e.g. "Cox's Bazar".
+  const last = parts.at(-1) ?? ''
+  return (last.length > 30 ? last.split(' ').slice(-2).join(' ') : last) || null
 }

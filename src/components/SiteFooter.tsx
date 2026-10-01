@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import Link from 'next/link'
 import { getCompany, getLicenses } from '@/lib/data'
 import { phoneLinks, titleCase } from '@/lib/normalize'
@@ -13,10 +14,24 @@ export async function SiteFooter() {
     <footer className="site-footer">
       <div className="container">
         <div className="site-footer__grid">
-          <div className="stack-sm">
+          <div className="stack">
+            <span className="site-footer__logo">
+              <Image src="/logo.webp" alt="" width={373} height={215} />
+            </span>
             <p className="site-footer__name">{name}</p>
-            <p>{TAGLINE}</p>
-            {company.established_year ? <p>Established {company.established_year}</p> : null}
+            <p>
+              {TAGLINE}
+              {company.established_year ? (
+                <>
+                  <br />
+                  Established {company.established_year}
+                </>
+              ) : null}
+            </p>
+            <p style={{ maxWidth: '40ch' }}>
+              Architectural, structural and building-services design, engineering assessment and turnkey
+              construction, from Dhaka.
+            </p>
           </div>
 
           <div>
@@ -37,7 +52,7 @@ export async function SiteFooter() {
           </div>
 
           <nav aria-label="Footer">
-            <h2 className="label">Pages</h2>
+            <h2 className="label">Explore</h2>
             <ul>
               <li>
                 <Link href="/">Home</Link>
@@ -49,6 +64,13 @@ export async function SiteFooter() {
               ))}
             </ul>
           </nav>
+
+          <div>
+            <h2 className="label">New project</h2>
+            <Link href="/contact" className="button button--small">
+              Start a project
+            </Link>
+          </div>
         </div>
 
         <div className="site-footer__base">

@@ -11,6 +11,8 @@ type Filter = 'all' | string
 
 const STATUS_ORDER = ['Completed', 'Ongoing', 'Completed / Ongoing', 'Planning']
 
+const chipLabel = (id: CategoryId) => (id === 'assessment' ? 'Assessment' : id === 'other' ? 'Other' : categoryLabel(id))
+
 // The ?category= query is read on the client only, so the server can render
 // the full, unfiltered list into static HTML.
 const subscribe = (onChange: () => void) => {
@@ -84,7 +86,7 @@ export function ProjectsBrowser({ projects }: { projects: Project[] }) {
               aria-pressed={category === c.id}
               onClick={() => selectCategory(c.id)}
             >
-              {c.label}
+              {chipLabel(c.id)}
               <span className="chip__count">{c.count}</span>
             </button>
           ))}
@@ -116,9 +118,10 @@ export function ProjectsBrowser({ projects }: { projects: Project[] }) {
       </p>
 
       {illustrated.length ? (
-        <ul className="project-grid">
-          {illustrated.map((project) => (
-            <li key={project.slug}>
+        // Re-keyed on every filter change so the cards animate in again.
+        <ul key={`${category}|${activeStatus}`} className="project-grid project-grid--animated">
+          {illustrated.map((project, i) => (
+            <li key={project.slug} style={{ '--i': i } as React.CSSProperties}>
               <ProjectCard project={project} headingLevel="h2" />
             </li>
           ))}

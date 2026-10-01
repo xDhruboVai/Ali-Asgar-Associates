@@ -80,19 +80,28 @@ export function cleanText(value: string | null | undefined): string | null {
   return text || null
 }
 
-const KEEP_UPPER = /[0-9/#]|^[A-Z]$|^(NHL|ANZ|DBL|EMPL|BOQ|JCO|DOHS|EPZ|BNBC|RMG|DEA)$/
+const KEEP_UPPER = /[0-9/#]|^[A-Z]$|^(NHL|ANZ|DBL|EMPL|BOQ|JCO|DOHS|EPZ|BNBC|RMG|DEA|ACME)$|^([A-Z]\.)+[A-Z]?$/
+const SMALL_WORDS = /^(OF|IN|AT|TO|BY|ON|AND|THE|CUM)$/
 
-/** "ALI ASGAR & ASSOCIATES" → "Ali Asgar & Associates". Leaves codes like "A/2" alone. */
+/** "ALI ASGAR & ASSOCIATES" → "Ali Asgar & Associates". Leaves codes ("A/2") and initials ("J.M", "KM") alone. */
 export function titleCase(value: string): string {
   return value
     .split(' ')
     .map((word) => {
-      const bare = word.replace(/[.,]/g, '')
-      if (KEEP_UPPER.test(bare)) return word
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+      const bare = word.replace(/[.,()]/g, '')
+      if (KEEP_UPPER.test(word.replace(/[,()]/g, '')) || KEEP_UPPER.test(bare)) return word
+      // Two-letter capitals are usually initials (KM, JM, MJ).
+      if (/^[A-Z]{2}$/.test(bare) && !SMALL_WORDS.test(bare)) return word
+      return word.toLowerCase().replace(/[a-z]/, (c) => c.toUpperCase())
     })
     .join(' ')
     .replace(/\s*\.\s*$/, '')
+}
+
+/** Names stored in capitals are shown in title case; mixed-case names are left as entered. */
+export function displayName(name: string): string {
+  const trimmed = name.trim()
+  return trimmed === trimmed.toUpperCase() ? titleCase(trimmed) : trimmed
 }
 
 export function slugify(value: string): string {
@@ -226,7 +235,7 @@ export function normaliseProjects(rows: ProjectRow[], clientNames: string[]): No
 
     projects.set(key, {
       slug: '',
-      name: fixSpelling(primary.name.trim()),
+      name: displayName(fixSpelling(primary.name)),
       categories,
       status: formatStatus(statusSource?.status ?? firstValue(ordered, 'status')),
       address: cleanText(firstValue(ordered, 'address')),
@@ -264,7 +273,7 @@ export function normaliseProjects(rows: ProjectRow[], clientNames: string[]): No
     } else {
       const project: Project = {
         slug: '',
-        name: row.name.trim(),
+        name: displayName(row.name),
         categories: ['other'],
         status: null,
         address: null,

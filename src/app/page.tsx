@@ -1,10 +1,13 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import { ProjectCard, shortLocation } from '@/components/ProjectCard'
-import { StatusLabel } from '@/components/StatusLabel'
-import { ABOUT_PARAGRAPHS, ABOUT_STATEMENT } from '@/lib/content'
+import { ViewTransition } from 'react'
+import { ClosingCta } from '@/components/ClosingCta'
+import { Journey } from '@/components/Journey'
+import { ProjectCard, ProjectMeta } from '@/components/ProjectCard'
+import { ServiceIcon } from '@/components/ServiceIcon'
+import { ABOUT_PARAGRAPHS, PRACTICE_ROLES } from '@/lib/content'
 import { getClientGroups, getCompany, getProjects } from '@/lib/data'
-import { CATEGORIES, categoryLabel, phoneLinks, titleCase } from '@/lib/normalize'
+import { CATEGORIES } from '@/lib/normalize'
 import { SERVICES } from '@/lib/services'
 import { TAGLINE } from '@/lib/site'
 import type { Project } from '@/lib/types'
@@ -13,6 +16,8 @@ export const revalidate = 3600
 
 /** Preferred hero; falls back to the first fully described project with an image. */
 const HERO_SLUG = 'windy-terrace'
+
+const delay = (n: number) => ({ '--d': n }) as React.CSSProperties
 
 function pickFeatured(projects: Project[], exclude: string, count: number): Project[] {
   const illustrated = projects.filter((p) => p.images.length && p.slug !== exclude)
@@ -37,7 +42,6 @@ export default async function HomePage() {
     projects.find((p) => p.slug === HERO_SLUG && p.images.length) ??
     projects.find((p) => p.images.length && !p.detailsPending)
   const featured = pickFeatured(projects, hero?.slug ?? '', 8)
-  const phone = phoneLinks(company.telephone)
   const sectors = CATEGORIES.filter((c) => c.id !== 'other')
     .map((c) => ({ ...c, count: projects.filter((p) => p.categories.includes(c.id)).length }))
     .filter((c) => c.count > 0)
@@ -45,147 +49,125 @@ export default async function HomePage() {
 
   return (
     <>
-      <section className="hero" aria-labelledby="hero-title">
+      <section className="hero blueprint" aria-labelledby="hero-title">
         <div className="container hero__grid">
           <div className="hero__copy">
-            <p className="label">{TAGLINE}</p>
-            <h1 id="hero-title">Buildings designed and engineered in Dhaka since {company.established_year}.</h1>
-            <p className="lede">
-              Architectural, structural, electrical and plumbing design for residential, commercial and
-              industrial buildings, and detailed engineering assessment of existing factories.
+            <h1 id="hero-title">
+              <span className="line">
+                <span style={delay(0)}>Where</span>
+              </span>{' '}
+              <span className="line">
+                <span style={delay(1)}>design meets</span>
+              </span>{' '}
+              <span className="line">
+                <span style={delay(2)}>
+                  <em>engineering.</em>
+                </span>
+              </span>
+            </h1>
+            <p className="label label--tick" data-enter style={delay(4)}>
+              {TAGLINE}
             </p>
-            <div className="hero__actions">
+            <p className="hero__lede" data-enter style={delay(5)}>
+              Architectural, structural, electrical and plumbing design for residential, commercial and industrial
+              buildings.
+            </p>
+            <div className="hero__actions" data-enter style={delay(6)}>
               <Link href="/projects" className="button">
-                View projects
+                Explore projects
               </Link>
-              <Link href="/services" className="button button--ghost">
-                Services
+              <Link href="/services" className="button button--light">
+                Our services
               </Link>
             </div>
-            <dl className="title-block">
-              <div>
-                <dt>Established</dt>
-                <dd>{company.established_year}</dd>
-              </div>
-              <div>
-                <dt>Office</dt>
-                <dd>Lalmatia, Dhaka</dd>
-              </div>
-              <div>
-                <dt>Design standard</dt>
-                <dd>BNBC</dd>
-              </div>
-            </dl>
           </div>
 
           {hero ? (
             <figure className="hero__figure">
               <div className="hero__image">
-                <Image
-                  src={hero.images[0].src}
-                  alt={hero.images[0].alt}
-                  fill
-                  priority
-                  sizes="(min-width: 960px) 50vw, 100vw"
-                  quality={85}
-                />
+                <ViewTransition name={`project-${hero.slug}`} share="project-image" default="none">
+                  <Image
+                    src={hero.images[0].src}
+                    alt={hero.images[0].alt}
+                    fill
+                    priority
+                    sizes="(min-width: 960px) 42vw, 100vw"
+                    quality={85}
+                  />
+                </ViewTransition>
               </div>
-              <figcaption className="hero__caption">
+              <figcaption className="hero__caption" data-enter style={delay(8)}>
                 <Link href={`/projects/${hero.slug}`}>{hero.name}</Link>
-                <span className="card__meta">
-                  <span>{categoryLabel(hero.categories[0])}</span>
-                  {shortLocation(hero.address) ? <span>{shortLocation(hero.address)}</span> : null}
-                  {hero.status ? <StatusLabel status={hero.status} /> : null}
-                </span>
+                <ProjectMeta project={hero} />
               </figcaption>
             </figure>
           ) : null}
         </div>
       </section>
 
-      <section className="section section--tight" aria-labelledby="about-title">
-        <div className="container intro">
-          <h2 id="about-title" className="label">
-            The practice
-          </h2>
-          <div>
-            <p className="intro__statement">{ABOUT_STATEMENT}</p>
-            <div className="intro__body prose">
-              {ABOUT_PARAGRAPHS.slice(0, 2).map((p) => (
-                <p key={p}>{p}</p>
-              ))}
+      <section className="section marks" aria-labelledby="about-title">
+        <div className="container">
+          <div className="intro">
+            <h2 id="about-title" className="statement" data-reveal>
+              Buildings designed and engineered in Dhaka <em>since {company.established_year}.</em>
+            </h2>
+            <div className="stack" data-reveal style={delay(2)}>
+              <div className="prose">
+                {ABOUT_PARAGRAPHS.slice(0, 2).map((p) => (
+                  <p key={p}>{p}</p>
+                ))}
+              </div>
+              <ul className="tag-list" aria-label="Disciplines">
+                <li>Architecture</li>
+                <li>Structural Engineering</li>
+                <li>Building Services</li>
+                <li>Turnkey Construction</li>
+              </ul>
             </div>
-            <p className="mt-lg">
-              <Link href="/practice" className="arrow-link">
-                About the practice and team
-              </Link>
-            </p>
           </div>
+          <dl className="facts" data-reveal>
+            <div>
+              <dt>Established</dt>
+              <dd>{company.established_year}</dd>
+            </div>
+            <div>
+              <dt>Based in</dt>
+              <dd>Dhaka</dd>
+            </div>
+            <div>
+              <dt>Design standard</dt>
+              <dd>BNBC</dd>
+            </div>
+          </dl>
         </div>
       </section>
 
-      <section className="section" aria-labelledby="work-title">
+      <section className="section section--gray" aria-labelledby="services-title">
         <div className="container">
           <div className="section-head">
-            <h2 id="work-title">Selected projects</h2>
-            <p>
-              Apartment towers, factories, hospitals and hotels in Dhaka, Chattogram, Gazipur and Cox’s Bazar.{' '}
-              <Link href="/projects" className="arrow-link">
-                All projects
-              </Link>
+            <div className="stack" data-reveal>
+              <p className="label label--tick">What we do</p>
+              <h2 id="services-title">From the first drawing to the finished building.</h2>
+            </div>
+            <p data-reveal style={delay(1)}>
+              Five services, taken on separately or together: design consultancy, structural engineering,
+              assessment of existing buildings, construction management and turnkey construction.
             </p>
           </div>
-          <ul className="project-grid project-grid--featured">
-            {featured.map((project, i) => (
-              <li key={project.slug}>
-                <ProjectCard
-                  project={project}
-                  sizes={i < 2 ? '(min-width: 1040px) 50vw, (min-width: 640px) 50vw, 100vw' : undefined}
-                />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="section section--ink" aria-labelledby="services-title">
-        <div className="container">
-          <div className="section-head">
-            <h2 id="services-title">Services</h2>
-            <p>From planning and design consultancy to construction on a turnkey basis.</p>
-          </div>
-          <ol className="service-list">
-            {SERVICES.map((service) => (
-              <li key={service.id} className="service-row">
-                <span className="service-row__letter" aria-hidden="true">
-                  {service.letter}
-                </span>
-                <h3>
-                  <Link href={`/services#${service.id}`}>
-                    <span className="visually-hidden">{service.letter}. </span>
-                    {service.name}
-                  </Link>
-                </h3>
-                <p className="service-row__summary">{service.summary}</p>
-              </li>
-            ))}
-          </ol>
-        </div>
-      </section>
-
-      <section className="section" aria-labelledby="sectors-title">
-        <div className="container intro">
-          <div className="stack-sm">
-            <h2 id="sectors-title">Work by sector</h2>
-            <p className="muted">Projects recorded in the firm’s portfolio, by building type.</p>
-          </div>
-          <ul className="sector-index">
-            {sectors.map((sector) => (
-              <li key={sector.id}>
-                <Link href={`/projects?category=${sector.id}`}>
-                  <span className="sector-index__name">{sector.label}</span>
-                  <span className="sector-index__count">
-                    {sector.count} {sector.count === 1 ? 'project' : 'projects'}
+          <ul className="service-cards">
+            {SERVICES.map((service, i) => (
+              <li key={service.id} data-reveal style={delay(i % 3)}>
+                <Link href={`/services#${service.id}`} className="service-card">
+                  <ServiceIcon id={service.id} className="service-card__icon" />
+                  <span className="service-card__body">
+                    <span className="service-card__title">{service.name}</span>
+                    <span className="service-card__text">{service.tagline}</span>
+                  </span>
+                  <span className="service-card__more">
+                    <span aria-hidden="true">Learn more</span>
+                    <span className="service-card__arrow" aria-hidden="true">
+                      →
+                    </span>
                   </span>
                 </Link>
               </li>
@@ -194,12 +176,96 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <section className="section section--dark blueprint" aria-labelledby="turnkey-title">
+        <div className="container">
+          <div className="section-head" style={{ marginBottom: 0 }}>
+            <div className="stack" data-reveal>
+              <p className="label label--tick">Turnkey</p>
+              <h2 id="turnkey-title">One firm, from planning to completion.</h2>
+            </div>
+            <p className="lede" data-reveal style={delay(1)}>
+              Design and construction delivered on a turnkey basis. The same office plans, designs, engineers and
+              builds the project.
+            </p>
+          </div>
+          <Journey />
+        </div>
+      </section>
+
+      <section className="section" aria-labelledby="work-title">
+        <div className="container">
+          <div className="section-head">
+            <div className="stack" data-reveal>
+              <p className="label label--tick">Projects</p>
+              <h2 id="work-title">Selected work</h2>
+            </div>
+            <div className="stack" data-reveal style={delay(1)}>
+              <ul className="tag-list" aria-label="Browse projects by sector">
+                {sectors.map((sector) => (
+                  <li key={sector.id}>
+                    <Link href={`/projects?category=${sector.id}`}>
+                      {sector.label}
+                      <span>{sector.count}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <ul className="mosaic">
+            {featured.map((project, i) => (
+              <li key={project.slug} data-reveal style={delay(i % 3)}>
+                <ProjectCard
+                  project={project}
+                  sizes={
+                    i === 0 || i === 4
+                      ? '(min-width: 760px) 58vw, 78vw'
+                      : '(min-width: 760px) 42vw, 78vw'
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+          <p className="label swipe-hint" aria-hidden="true">
+            Swipe for more →
+          </p>
+          <p className="mt-lg">
+            <Link href="/projects" className="button button--outline">
+              All projects
+            </Link>
+          </p>
+        </div>
+      </section>
+
+      <section className="section section--gray marks" aria-labelledby="practice-title">
+        <div className="container intro" style={{ alignItems: 'start' }}>
+          <div className="stack" data-reveal>
+            <p className="label label--tick">The practice</p>
+            <h2 id="practice-title">Engineers and architects in one office.</h2>
+            <p className="prose">{ABOUT_PARAGRAPHS[0]}</p>
+            <p>
+              <Link href="/practice" className="arrow-link">
+                The practice and team
+              </Link>
+            </p>
+          </div>
+          <ul className="roles" data-reveal style={delay(2)} aria-label="Who works in the office">
+            {PRACTICE_ROLES.map((role) => (
+              <li key={role}>{role}</li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
       {keyClients.length ? (
-        <section className="section section--deep" aria-labelledby="clients-title">
+        <section className="section section--dark" aria-labelledby="clients-title">
           <div className="container">
             <div className="section-head">
-              <h2 id="clients-title">Clients</h2>
-              <p>
+              <div className="stack" data-reveal>
+                <p className="label label--tick">Clients</p>
+                <h2 id="clients-title">Selected clients</h2>
+              </div>
+              <p data-reveal style={delay(1)}>
                 Developers and industrial groups the firm has worked with.{' '}
                 <Link href="/practice#clients" className="arrow-link">
                   Full client list
@@ -207,8 +273,8 @@ export default async function HomePage() {
               </p>
             </div>
             <div className="client-columns">
-              {keyClients.map((group) => (
-                <div key={group.category}>
+              {keyClients.map((group, i) => (
+                <div key={group.category} data-reveal style={delay(i)}>
                   <h3>{group.category}</h3>
                   <ul>
                     {group.names.map((n) => (
@@ -222,23 +288,7 @@ export default async function HomePage() {
         </section>
       ) : null}
 
-      <section className="section" aria-labelledby="contact-title">
-        <div className="container">
-          <div className="section-head" style={{ marginBottom: 0 }}>
-            <div className="stack">
-              <h2 id="contact-title">Talk to the office about a project.</h2>
-              {company.address ? <p className="muted">{titleCase(company.address)}</p> : null}
-            </div>
-            <div className="cta-band__links">
-              {phone ? <a href={phone.href}>{phone.display}</a> : null}
-              {company.email ? <a href={`mailto:${company.email}`}>{company.email}</a> : null}
-              <Link href="/contact" className="arrow-link">
-                Contact details
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+      <ClosingCta />
     </>
   )
 }

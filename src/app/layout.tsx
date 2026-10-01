@@ -1,9 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { Archivo, IBM_Plex_Mono } from 'next/font/google'
+import { Archivo, Geist_Mono } from 'next/font/google'
+import { ViewTransition } from 'react'
+import { CursorLabel, ScrollReveal } from '@/components/Motion'
 import { SiteFooter } from '@/components/SiteFooter'
 import { SiteHeader } from '@/components/SiteHeader'
 import { getCompany } from '@/lib/data'
-import { titleCase } from '@/lib/normalize'
+import { phoneLinks, titleCase } from '@/lib/normalize'
 import { SITE_URL, TAGLINE } from '@/lib/site'
 import './globals.css'
 
@@ -14,10 +16,9 @@ const archivo = Archivo({
   display: 'swap',
 })
 
-const plexMono = IBM_Plex_Mono({
+const geistMono = Geist_Mono({
   subsets: ['latin'],
-  weight: ['400', '500'],
-  variable: '--font-plex-mono',
+  variable: '--font-geist-mono',
   display: 'swap',
 })
 
@@ -35,23 +36,33 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#f4f1ea',
+  themeColor: '#ffffff',
 }
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const company = await getCompany()
 
   return (
-    <html lang="en" className={`${archivo.variable} ${plexMono.variable}`}>
+    <html lang="en" className={`${archivo.variable} ${geistMono.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Scroll-reveal styles only hide content once scripting is confirmed. */}
+        <script dangerouslySetInnerHTML={{ __html: "document.documentElement.classList.add('js')" }} />
+      </head>
       <body>
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <SiteHeader companyName={titleCase(company.name)} />
+        <SiteHeader
+          companyName={titleCase(company.name)}
+          phone={phoneLinks(company.telephone)}
+          email={company.email}
+        />
         <main id="main" tabIndex={-1}>
-          {children}
+          <ViewTransition>{children}</ViewTransition>
         </main>
         <SiteFooter />
+        <ScrollReveal />
+        <CursorLabel />
       </body>
     </html>
   )

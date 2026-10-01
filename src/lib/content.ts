@@ -32,3 +32,6 @@ export const PRINCIPAL_TRAINING = [
     org: 'Asset Developments, Dhaka',
   },
 ]
+
+/** Who works in the office, as listed in the corporate profile. */
+export const PRACTICE_ROLES = ['Structural engineers', 'Architects', 'Diploma engineers', 'CAD staff']

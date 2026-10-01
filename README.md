@@ -29,7 +29,7 @@ npm run dev                  # http://localhost:3000
 
 ## Pages
 
-- `/` — hero, practice introduction, selected projects, services A–E, work by sector, clients, contact
+- `/` — hero, statement, services, turnkey journey, selected projects, practice, clients, contact
 - `/projects` — every project, filterable by sector and status (`/projects?category=industrial` links work)
 - `/projects/[slug]` — images and technical data for one project (static, one page per project)
 - `/services` — the five service lines in the firm's order of priority
@@ -38,12 +38,21 @@ npm run dev                  # http://localhost:3000
 
 Pages are generated statically and refreshed from Supabase at most once an hour.
 
+## Design and motion
+
+- Palette from the logo: white and light gray surfaces, near-black, one red accent (`--red` in `src/app/globals.css`).
+- Type: Archivo (variable width; condensed for display) and Geist Mono for small technical labels.
+- Motion uses CSS only, plus one small observer (`src/components/Motion.tsx`) that reveals `[data-reveal]`
+  elements on scroll. Page transitions and the card-to-case-study image morph use React `<ViewTransition>`.
+  No animation library is installed. Everything is disabled under `prefers-reduced-motion`.
+- Content hidden for scroll reveal is only hidden once JavaScript has run (`.js` class on `<html>`).
+
 ## Where content comes from
 
 | Content                                   | Source                                                      |
 | ----------------------------------------- | ----------------------------------------------------------- |
 | Company, contact, projects, images, team, clients, registrations | Supabase tables                      |
-| Service structure (A–E)                   | `src/lib/services.ts`, from the firm's handwritten brief    |
+| Services and the turnkey journey          | `src/lib/services.ts`, from the firm's handwritten brief    |
 | About text, principal's earlier experience | `src/lib/content.ts`, from the 2016 corporate profile      |
 
 ### Data handling (`src/lib/normalize.ts`)
