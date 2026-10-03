@@ -1847,35 +1847,17 @@ html:not(.js) .site-header {
   display: grid;
   gap: 72px 24px;
 }
-@media (min-width: 900px) {
+/* An even grid: two, then three cards across, all the same size. */
+@media (min-width: 640px) {
   .work-grid {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: clamp(16px, 2vw, 32px);
-    row-gap: clamp(56px, 5.5vw, 96px);
   }
-  /* Three per row, widths 5 / 4 / 3 then 3 / 5 / 4, nudged off a common top line. */
-  .work-grid__item--a {
-    grid-column: 1 / 6;
-  }
-  .work-grid__item--b {
-    grid-column: 6 / 10;
-    margin-top: 5vw;
-  }
-  /* Shorter cards sit low or centred in their row, so no hole opens beneath them. */
-  .work-grid__item--c {
-    grid-column: 10 / 13;
-    align-self: end;
-  }
-  .work-grid__item--d {
-    grid-column: 1 / 4;
-    align-self: end;
-  }
-  .work-grid__item--e {
-    grid-column: 4 / 9;
-  }
-  .work-grid__item--f {
-    grid-column: 9 / 13;
-    align-self: end;
+}
+@media (min-width: 1000px) {
+  .work-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: clamp(56px, 5vw, 88px);
   }
 }
 
@@ -2154,29 +2136,23 @@ html:not(.js) .site-header {
 
 /* The client list runs across a band of logo red. */
 .clients {
-  --graphite: var(--on-red-soft);
-  --rule: rgb(254 243 236 / 0.24);
-  --rule-dark: rgb(254 243 236 / 0.24);
-  --accent: var(--on-red);
-  --focus: var(--on-red);
+  --graphite: var(--on-dark-soft);
+  --rule: var(--rule-dark);
+  --accent: var(--on-dark);
+  --focus: var(--on-dark);
   overflow: hidden;
   padding-block: clamp(64px, 7vw, 112px);
-  background-color: var(--red-band);
+  background-color: var(--ink);
   background-image:
-    radial-gradient(ellipse 60% 80% at 100% 0%, rgb(233 46 52 / 0.55), transparent 70%),
-    linear-gradient(rgb(254 243 236 / 0.06) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(254 243 236 / 0.06) 1px, transparent 1px);
-  background-size:
-    100% 100%,
-    32px 32px,
-    32px 32px;
-  color: var(--on-red);
+    linear-gradient(rgb(244 243 239 / 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(244 243 239 / 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
+  color: var(--on-dark);
 }
-.clients .accent {
-  color: var(--on-red);
-}
+/* Black and white only: the accent word is set apart by the serif italic, not by colour. */
+.clients .accent,
 .clients .text-link:hover {
-  color: var(--on-red);
+  color: var(--on-dark);
 }
 .clients__strips {
   display: grid;
@@ -2197,7 +2173,7 @@ html:not(.js) .site-header {
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--on-red-soft);
+  color: var(--on-dark-soft);
 }
 
 .marquee {
@@ -2231,7 +2207,7 @@ html:not(.js) .site-header {
   width: 0.16em;
   height: 0.16em;
   margin: 0 0.55em;
-  background: var(--ink);
+  background: var(--on-dark-soft);
   transform: rotate(45deg);
 }
 /* With motion: one line per strip, drifting. */
@@ -2257,7 +2233,7 @@ html:not(.js) .site-header {
 }
 .motion .marquee li:hover {
   color: transparent;
-  -webkit-text-stroke: 1px var(--on-red);
+  -webkit-text-stroke: 1px var(--on-dark);
 }
 
 /* ------------------------------------------------------------------

@@ -33,15 +33,8 @@ function pickVaried(projects: Project[], exclude: Set<string>, count: number): P
   return picked.slice(0, count)
 }
 
-/** Asymmetric placement for the selected work, with each card moving at its own pace. */
-const WORK_LAYOUT: { slot: string; ratio: 'tall' | 'portrait' | 'square'; speed: number; sizes: string }[] = [
-  { slot: 'a', ratio: 'portrait', speed: 0, sizes: '(min-width: 900px) 40vw, 100vw' },
-  { slot: 'b', ratio: 'tall', speed: 0.16, sizes: '(min-width: 900px) 32vw, 100vw' },
-  { slot: 'c', ratio: 'square', speed: 0.06, sizes: '(min-width: 900px) 25vw, 100vw' },
-  { slot: 'd', ratio: 'tall', speed: 0.1, sizes: '(min-width: 900px) 25vw, 100vw' },
-  { slot: 'e', ratio: 'portrait', speed: -0.04, sizes: '(min-width: 900px) 40vw, 100vw' },
-  { slot: 'f', ratio: 'square', speed: 0.14, sizes: '(min-width: 900px) 32vw, 100vw' },
-]
+/** How many projects the selected-work grid shows: two even rows of three. */
+const WORK_COUNT = 6
 
 export default async function HomePage() {
   const [company, projects, clientGroups, team] = await Promise.all([
@@ -61,7 +54,7 @@ export default async function HomePage() {
     image: p.images[0],
   }))
 
-  const featured = pickVaried(projects, new Set(elevation.map((p) => p.slug)), WORK_LAYOUT.length)
+  const featured = pickVaried(projects, new Set(elevation.map((p) => p.slug)), WORK_COUNT)
   const sectors = CATEGORIES.filter((c) => c.id !== 'other')
     .map((c) => ({ ...c, count: projects.filter((p) => p.categories.includes(c.id)).length }))
     .filter((c) => c.count > 0)
@@ -177,21 +170,15 @@ export default async function HomePage() {
           </div>
 
           <ul className="work-grid">
-            {featured.map((project, i) => {
-              const layout = WORK_LAYOUT[i]
-              return (
-                <li key={project.slug} className={`work-grid__item work-grid__item--${layout.slot}`}>
-                  <div data-speed={layout.speed || undefined}>
-                    <ProjectCard
-                      project={project}
-                      index={String(i + 1).padStart(2, '0')}
-                      ratio={layout.ratio}
-                      sizes={layout.sizes}
-                    />
-                  </div>
-                </li>
-              )
-            })}
+            {featured.map((project, i) => (
+              <li key={project.slug}>
+                <ProjectCard
+                  project={project}
+                  index={String(i + 1).padStart(2, '0')}
+                  sizes="(min-width: 1000px) 33vw, (min-width: 640px) 50vw, 100vw"
+                />
+              </li>
+            ))}
           </ul>
 
           <div className="work__more" data-reveal>
