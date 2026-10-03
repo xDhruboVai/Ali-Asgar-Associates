@@ -1183,7 +1183,8 @@ html:not(.js) .site-header {
 }
 .skyline__item {
   position: relative;
-  height: calc(var(--h) * 100%);
+  /* Every frame the same size, in an even row. */
+  height: 100%;
   min-width: 0;
 }
 .skyline__link {

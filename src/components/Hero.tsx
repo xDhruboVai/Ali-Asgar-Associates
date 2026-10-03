@@ -19,8 +19,6 @@ type Props = {
   established: number | null
 }
 
-/** Heights of the elevation, as a share of the tallest building. */
-const HEIGHTS = [0.7, 1, 0.56, 0.86, 0.64]
 /** How far each picture drifts inside its frame, for depth. */
 const DEPTH = [0.5, 1, 0.35, 0.8, 0.45]
 
@@ -128,11 +126,7 @@ export function Hero({ buildings, established }: Props) {
       <div className="container hero__elevation">
         <ul className="skyline" aria-label="Featured buildings">
           {buildings.map((b, i) => (
-            <li
-              key={b.slug}
-              className="skyline__item"
-              style={{ '--h': HEIGHTS[i % HEIGHTS.length] } as React.CSSProperties}
-            >
+            <li key={b.slug} className="skyline__item">
               <Link href={`/projects/${b.slug}`} className="skyline__link" data-cursor="View">
                 <span className="skyline__frame" data-hero-frame>
                   <span className="skyline__depth" data-hero-depth>
