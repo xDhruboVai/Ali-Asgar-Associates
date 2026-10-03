@@ -73,7 +73,9 @@ export function SiteHeader({ companyName, phone, email }: Props) {
       <header className="site-header" data-scrolled={scrolled} data-hidden={hidden && !open} data-open={open}>
         <div className="container site-header__inner">
           <Link href="/" className="brand" aria-label={`${companyName}, home`}>
-            <Image src="/logo.webp" alt="" width={376} height={208} className="brand__mark" priority />
+            <span className="brand__tile">
+              <Image src="/logo.webp" alt="" width={376} height={208} className="brand__mark" priority />
+            </span>
             <span className="brand__name">{withAmpersand(companyName)}</span>
           </Link>
 
@@ -94,7 +96,7 @@ export function SiteHeader({ companyName, phone, email }: Props) {
             </ul>
           </nav>
 
-          <Link href="/contact" className="btn btn--ink btn--small header-cta" data-magnetic="0.25">
+          <Link href="/contact" className="btn btn--light btn--small header-cta" data-magnetic="0.25">
             <BtnLabel>Start a project</BtnLabel>
           </Link>
 

@@ -42,21 +42,29 @@ Pages are generated statically and refreshed from Supabase at most once an hour.
 
 "Drawn, then built": the site is laid out like a drawing sheet.
 
-- Palette from the logo: warm drafting-paper surfaces, ink, one red accent (`--red` in `src/app/globals.css`).
+- Palette: only the logo's colours. Its black (`--ink`, with a drafting grid) for every page opening and
+  the footer; an off-white graph paper (`--paper`) for reading; the grey of its stave lines for
+  annotation; its red (`--red`) for actions and the clients band. Every colour is set a few steps off its stock
+  value (no pure black, white or primary red). Red text uses the contextual `--accent` token, which turns a
+  brighter red on dark grounds.
 - Type: Archivo (variable width, condensed for display), an Instrument Serif italic for one accent per
   headline, and Geist Mono for annotations (sheet numbers, labels, metadata). Each page has a sheet
   number (A-000 home, A-100 projects …) shown in the head and in the footer's title block.
-- Imagery is only the firm's own project renders from Supabase. The home hero stands five of them on a
-  ground line, like an elevation.
+- Imagery is the firm's own project renders from Supabase. The home hero stands five of them on a
+  ground line, like an elevation. The one drawn illustration is the turnkey section's isometric building
+  (`src/components/BuildingDrawing.tsx`), generated in code from plan dimensions.
 - Motion: GSAP with ScrollTrigger, and Lenis for smooth scrolling (the only smooth-scroll engine).
   `src/components/Motion.tsx` holds the whole system; markup opts in with data attributes
   (`data-words`, `data-reveal`, `data-line`, `data-clip`, `data-parallax`, `data-speed`, `data-expand`,
-  `data-count`, `data-hscroll`, `data-marquee`). Headings are split into words on the server by
+  `data-count`, `data-build`, `data-marquee`). Headings are split into words on the server by
   `<Words>`, so screen readers get the unsplit text and nothing depends on JavaScript.
   `Hero.tsx` runs the opening sequence; `Cursor.tsx` adds the "View" label and magnetic buttons on fine
   pointers. Page transitions and the card-to-case-study image morph use React `<ViewTransition>`.
 - Under `prefers-reduced-motion` no animation or smooth scrolling runs and everything renders in its
-  final state; the pinned turnkey journey becomes a grid and the client marquee a wrapped list.
+  final state; the turnkey building is shown finished and the client marquee is a wrapped list.
+- The turnkey section (`Journey.tsx`) builds its drawing one stage per step: plot, grid, outline, structure,
+  floors under a crane, then walls and roof. On wide screens it pins and the scroll drives it; on narrow
+  screens it plays once as it comes into view.
 - Hidden starting states only apply under the `motion` class, which the head script removes again if
   the motion script has not started within three seconds.
 - No Three.js: shader distortion would warp the building renders, which need to read accurately.

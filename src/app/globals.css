@@ -1,29 +1,62 @@
 /* ------------------------------------------------------------------
    Ali Asgar & Associates — site styles
-   "Drawn, then built": warm drafting paper, ink, ruled lines and the
-   single red of the logo. Condensed Archivo carries the display type,
+   "Drawn, then built", in the colours of the logo and nothing else:
+   its black for the dark grounds, its red for everything that matters,
+   the grey of its stave lines for annotation, and an off-white page
+   ruled like graph paper. Condensed Archivo carries the display type,
    an Instrument Serif italic marks one accent per headline, and Geist
    Mono writes the annotations, as on a drawing sheet.
+
+   Every colour is deliberately set a few steps off the stock value
+   (no pure black, white or primary red), so nothing reads as default.
    ------------------------------------------------------------------ */
 
 :root {
   color-scheme: light;
 
-  --paper: #f2f0ea;
-  --paper-2: #e9e6de;
-  --paper-3: #dcd8cd;
-  --ink: #0f0f0e;
-  --ink-2: #1c1c1a;
-  --ink-3: #2b2b28;
-  --graphite: #67655e;
-  --graphite-2: #8f8c83;
-  --on-dark: #f2f0ea;
-  --on-dark-soft: #a9a69d;
-  --rule: rgb(15 15 14 / 0.13);
-  --rule-strong: rgb(15 15 14 / 0.85);
-  --rule-dark: rgb(242 240 234 / 0.14);
-  --red: #e3000f;
-  --red-on-dark: #ff3d48;
+  /* Paper: an off-white, like the ground of the logo. */
+  --paper: rgb(246 245 241);
+  --paper-2: rgb(235 234 229);
+  --paper-3: rgb(220 219 214);
+
+  /* Ink: the logo's black, a breath off pure. */
+  --ink: rgb(13 13 17);
+  --ink-2: rgb(29 29 34);
+  --ink-3: rgb(46 46 52);
+
+  /* Grey: the logo's stave lines. */
+  --graphite: rgb(90 90 97);
+  --graphite-2: rgb(132 132 139);
+
+  /* Text on dark and on red. */
+  --on-dark: rgb(244 243 239);
+  --on-dark-soft: rgb(176 176 181);
+  --on-red: rgb(255 246 243);
+  --on-red-soft: rgb(255 221 216);
+
+  /* The logo red: a fill, a deeper band, a text red for paper, and a brighter red for dark grounds. */
+  --red: rgb(214 19 35);
+  --red-band: rgb(189 17 33);
+  --red-ink: rgb(197 17 32);
+  --red-on-dark: rgb(255 82 88);
+
+  --rule: rgb(13 13 17 / 0.13);
+  --rule-strong: rgb(13 13 17 / 0.82);
+  --rule-dark: rgb(244 243 239 / 0.14);
+
+  /* Contextual: deep red text on paper, brighter red on black (see the dark-ground block below). */
+  --accent: var(--red-ink);
+  --focus: var(--red-ink);
+
+  --grid-minor: rgb(13 13 17 / 0.045);
+  --grid-major: rgb(13 13 17 / 0.085);
+
+  /* Faces of the isometric building drawing: lit top, two shaded sides, glass. */
+  --face-top: rgb(252 251 248);
+  --face-left: rgb(232 231 226);
+  --face-right: rgb(213 212 207);
+  --face-ground: rgb(243 242 238);
+  --face-glass: rgb(199 199 203);
 
   --font-sans: var(--font-archivo), 'Helvetica Neue', Arial, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, 'SFMono-Regular', Menlo, monospace;
@@ -51,6 +84,48 @@
   :root {
     --header-h: 64px;
   }
+}
+
+/* Dark grounds re-point the contextual tokens, so labels, rules and accents
+   inside them pick up their dark-ground colours without per-component overrides. */
+.site-header,
+.menu,
+.hero,
+.page-head,
+.section--dark,
+.next-project,
+.site-footer {
+  --graphite: var(--on-dark-soft);
+  --graphite-2: rgb(150 150 157);
+  --rule: var(--rule-dark);
+  --rule-strong: rgb(244 243 239 / 0.4);
+  --accent: var(--red-on-dark);
+  --focus: var(--red-on-dark);
+  --grid-minor: rgb(244 243 239 / 0.045);
+  --grid-major: rgb(244 243 239 / 0.085);
+}
+
+/* Dark grounds: the logo black with a drafting grid, a soft lamp-light lift and a faint red glow. */
+.hero,
+.page-head,
+.section--dark {
+  background-color: var(--ink);
+  background-image:
+    radial-gradient(ellipse 70% 60% at 78% 0%, rgb(58 58 66 / 0.6), transparent 70%),
+    radial-gradient(ellipse 45% 55% at 100% 100%, rgb(214 19 35 / 0.14), transparent 70%),
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    100% 100%,
+    160px 160px,
+    160px 160px,
+    32px 32px,
+    32px 32px;
+  background-position: 0 0, 0 0, -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+  color: var(--on-dark);
 }
 
 /* ------------------------------------------------------------------
@@ -83,9 +158,21 @@ html.lenis body {
   overflow: hidden;
 }
 
+/* Light sections sit on graph paper: a faint 32px grid with a heavier line every 160px. */
 body {
   margin: 0;
-  background: var(--paper);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size:
+    160px 160px,
+    160px 160px,
+    32px 32px,
+    32px 32px;
+  background-position: -1px -1px;
   color: var(--ink);
   font-family: var(--font-sans);
   font-size: var(--fs-body);
@@ -156,7 +243,7 @@ sup {
 }
 
 :focus-visible {
-  outline: 2px solid var(--red);
+  outline: 2px solid var(--focus);
   outline-offset: 4px;
   border-radius: 2px;
 }
@@ -167,7 +254,7 @@ main:focus {
 
 ::selection {
   background: var(--red);
-  color: #fff;
+  color: var(--on-red);
 }
 
 .visually-hidden {
@@ -216,13 +303,9 @@ main:focus {
   padding-block: clamp(44px, 4.5vw, 72px);
 }
 
-.section--dark {
-  background: var(--ink);
-  color: var(--on-dark);
-}
 
 .page-body {
-  padding-block: clamp(20px, 2vw, 32px) clamp(64px, 7vw, 112px);
+  padding-block: clamp(36px, 4vw, 64px) clamp(64px, 7vw, 112px);
 }
 
 /* Display type: condensed, tight, heavy. */
@@ -290,8 +373,7 @@ main:focus {
   transform-origin: left center;
 }
 
-.section--dark .rule,
-.journey .rule {
+.section--dark .rule {
   background: var(--rule-dark);
 }
 
@@ -304,18 +386,13 @@ main:focus {
   color: var(--graphite);
 }
 .eyebrow__num {
-  color: var(--red);
+  color: var(--accent);
 }
 .eyebrow__rule {
   width: 36px;
   height: 1px;
   background: currentColor;
   opacity: 0.6;
-}
-.section--dark .eyebrow,
-.journey .eyebrow,
-.clients .eyebrow {
-  color: var(--on-dark-soft);
 }
 
 /* Section head: title on the left, lede on the right. */
@@ -336,10 +413,6 @@ main:focus {
   color: var(--graphite);
   font-size: var(--fs-lead);
   line-height: 1.4;
-}
-.section--dark .sec-head__lede,
-.clients .sec-head__lede {
-  color: var(--on-dark-soft);
 }
 
 /* ------------------------------------------------------------------
@@ -490,11 +563,49 @@ a:focus-visible .roll > span {
   color: var(--ink);
 }
 .btn--ink:hover {
-  color: #fff;
+  color: var(--on-red);
 }
 .btn--ink:hover .btn__icon {
-  background: #fff;
-  color: var(--red);
+  background: var(--on-red);
+  color: var(--red-ink);
+}
+
+/* Red: the main action on dark grounds. Paper rises behind it on hover. */
+.btn--red {
+  background: var(--red);
+  color: var(--on-red);
+  box-shadow: 0 10px 30px -12px rgb(214 19 35 / 0.7);
+}
+.btn--red::before {
+  background: var(--paper);
+}
+.btn--red .btn__icon {
+  background: var(--on-red);
+  color: var(--red-ink);
+}
+.btn--red:hover {
+  color: var(--ink);
+}
+.btn--red:hover .btn__icon {
+  background: var(--ink);
+  color: var(--on-dark);
+}
+
+/* Light: a paper pill for dark grounds that turns red on hover. */
+.btn--light {
+  background: var(--paper);
+  color: var(--ink);
+}
+.btn--light .btn__icon {
+  background: var(--ink);
+  color: var(--on-dark);
+}
+.btn--light:hover {
+  color: var(--on-red);
+}
+.btn--light:hover .btn__icon {
+  background: var(--on-red);
+  color: var(--red-ink);
 }
 
 .btn--outline {
@@ -504,15 +615,15 @@ a:focus-visible .roll > span {
 }
 .btn--outline .btn__icon {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--on-dark);
 }
 .btn--outline:hover {
-  color: #fff;
+  color: var(--on-red);
   box-shadow: inset 0 0 0 1px var(--red);
 }
 .btn--outline:hover .btn__icon {
-  background: #fff;
-  color: var(--red);
+  background: var(--on-red);
+  color: var(--red-ink);
 }
 
 .btn--small {
@@ -550,7 +661,7 @@ a:focus-visible .roll > span {
   transition: transform 0.5s var(--ease-out);
 }
 .text-link:hover {
-  color: var(--red);
+  color: var(--accent);
   animation: underline-redraw 0.8s var(--ease-out);
 }
 .text-link:hover::after {
@@ -583,7 +694,7 @@ a:focus-visible .roll > span {
 }
 .big-link:hover {
   background-size: 100% 1px;
-  color: var(--red);
+  color: var(--accent);
 }
 .big-link address {
   display: inline;
@@ -605,6 +716,7 @@ a:focus-visible .roll > span {
   height: 40px;
   padding: 0 16px;
   border-radius: 999px;
+  background: var(--paper);
   box-shadow: inset 0 0 0 1px var(--rule);
   font-size: var(--fs-small);
   text-decoration: none;
@@ -614,12 +726,16 @@ a:focus-visible .roll > span {
     box-shadow 0.4s;
 }
 .sector-links sup {
-  color: var(--red);
+  color: var(--accent);
+  transition: color 0.4s;
 }
 .sector-links a:hover {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--on-dark);
   box-shadow: inset 0 0 0 1px var(--ink);
+}
+.sector-links a:hover sup {
+  color: var(--red-on-dark);
 }
 
 /* Type / location / status annotation. */
@@ -638,7 +754,7 @@ a:focus-visible .roll > span {
   white-space: nowrap;
 }
 .status--live {
-  color: var(--red);
+  color: var(--accent);
 }
 .status--live::after {
   content: '';
@@ -647,7 +763,7 @@ a:focus-visible .roll > span {
   height: 6px;
   margin-left: 0.5em;
   border-radius: 50%;
-  background: var(--red);
+  background: var(--accent);
   vertical-align: 0.1em;
   animation: pulse 2s ease-in-out infinite;
 }
@@ -666,6 +782,8 @@ a:focus-visible .roll > span {
   inset: 0 0 auto;
   z-index: 120;
   height: var(--header-h);
+  /* Every page opens on a dark ground, so the header is always light on dark. */
+  color: var(--on-dark);
   transition:
     transform 0.7s var(--ease-out),
     background-color 0.5s,
@@ -677,10 +795,10 @@ html:not(.js) .site-header {
   position: absolute;
 }
 .site-header[data-scrolled='true'] {
-  background: rgb(242 240 234 / 0.82);
-  backdrop-filter: blur(16px) saturate(1.5);
-  -webkit-backdrop-filter: blur(16px) saturate(1.5);
-  box-shadow: 0 1px 0 var(--rule);
+  background: rgb(13 13 17 / 0.86);
+  backdrop-filter: blur(16px) saturate(1.4);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 1px 0 var(--rule-dark);
 }
 .site-header[data-hidden='true'] {
   transform: translateY(-101%);
@@ -690,7 +808,6 @@ html:not(.js) .site-header {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
   box-shadow: none;
-  color: var(--paper);
 }
 
 .site-header__inner {
@@ -707,16 +824,24 @@ html:not(.js) .site-header {
   margin-right: auto;
   text-decoration: none;
 }
-.brand__mark {
-  width: auto;
-  height: 30px;
+/* The logo is shown unaltered, on a small paper tile like a stamp on the drawing. */
+.brand__tile {
+  display: grid;
+  place-items: center;
+  padding: 5px 8px;
+  border-radius: 8px;
+  background: var(--paper);
+  box-shadow:
+    0 0 0 1px rgb(244 243 239 / 0.2),
+    0 6px 18px -8px rgb(3 3 5 / 0.7);
   transition: transform 0.8s var(--ease-out);
 }
-.brand:hover .brand__mark {
-  transform: rotate(-4deg) scale(1.04);
+.brand__mark {
+  width: auto;
+  height: 26px;
 }
-.site-header[data-open='true'] .brand__mark {
-  filter: invert(1) hue-rotate(180deg) saturate(3);
+.brand:hover .brand__tile {
+  transform: rotate(-4deg) scale(1.04);
 }
 .brand__name {
   font-size: 1rem;
@@ -726,7 +851,7 @@ html:not(.js) .site-header {
   white-space: nowrap;
 }
 .brand__name .amp {
-  color: var(--red);
+  color: var(--accent);
   font-size: 1.12em;
   margin-inline: 0.05em;
 }
@@ -759,7 +884,7 @@ html:not(.js) .site-header {
 }
 .nav a:hover .nav__num,
 .nav a[aria-current='page'] .nav__num {
-  color: var(--red);
+  color: var(--accent);
 }
 .nav a[aria-current='page']::after {
   content: '';
@@ -770,7 +895,7 @@ html:not(.js) .site-header {
   height: 4px;
   margin-left: 2px;
   border-radius: 50%;
-  background: var(--red);
+  background: var(--accent);
 }
 
 .header-cta {
@@ -798,8 +923,8 @@ html:not(.js) .site-header {
   padding: 0 4px 0 16px;
   border: 0;
   border-radius: 999px;
-  background: var(--ink);
-  color: var(--paper);
+  background: var(--paper);
+  color: var(--ink);
   font-size: 0.875rem;
   font-weight: 500;
   cursor: pointer;
@@ -808,8 +933,8 @@ html:not(.js) .site-header {
     color 0.5s;
 }
 .site-header[data-open='true'] .menu-toggle {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--red);
+  color: var(--on-red);
 }
 .menu-toggle__bars {
   position: relative;
@@ -818,20 +943,21 @@ html:not(.js) .site-header {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: var(--paper);
+  background: var(--ink);
+  transition: background-color 0.5s;
 }
 .site-header[data-open='true'] .menu-toggle__bars {
-  background: var(--ink);
+  background: var(--on-red);
 }
 .menu-toggle__bars span {
   position: absolute;
   width: 14px;
   height: 1.5px;
-  background: var(--ink);
+  background: var(--on-dark);
   transition: transform 0.6s var(--ease-out);
 }
 .site-header[data-open='true'] .menu-toggle__bars span {
-  background: var(--paper);
+  background: var(--red-ink);
 }
 .menu-toggle__bars span:first-child {
   transform: translateY(-3px);
@@ -846,7 +972,7 @@ html:not(.js) .site-header {
   transform: rotate(-45deg);
 }
 
-/* Full-screen menu: an ink sheet that drops from the top. */
+/* Full-screen menu: a black drafting sheet that drops from the top. */
 .menu {
   position: fixed;
   inset: 0;
@@ -855,8 +981,16 @@ html:not(.js) .site-header {
   flex-direction: column;
   justify-content: space-between;
   padding: calc(var(--header-h) + 5vh) var(--gutter) max(28px, env(safe-area-inset-bottom));
-  background: var(--ink);
-  color: var(--paper);
+  background-color: var(--ink);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 100% 0%, rgb(214 19 35 / 0.16), transparent 70%),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    32px 32px,
+    32px 32px;
+  color: var(--on-dark);
   clip-path: inset(0 0 100% 0);
   visibility: hidden;
   transition:
@@ -893,7 +1027,7 @@ html:not(.js) .site-header {
 .menu__num {
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
-  color: var(--red-on-dark);
+  color: var(--accent);
 }
 .menu__label {
   font-size: clamp(2.8rem, 13vw, 5.5rem);
@@ -942,7 +1076,7 @@ html:not(.js) .site-header {
   height: 92px;
   border-radius: 50%;
   background: var(--red);
-  color: #fff;
+  color: var(--on-red);
   font-family: var(--font-mono);
   font-size: 0.68rem;
   letter-spacing: 0.1em;
@@ -1004,7 +1138,7 @@ html:not(.js) .site-header {
   margin-left: -0.04em;
 }
 .hero__title .accent {
-  color: var(--red);
+  color: var(--accent);
   letter-spacing: -0.03em;
   padding-right: 0.04em;
 }
@@ -1019,7 +1153,7 @@ html:not(.js) .site-header {
   font-size: var(--fs-lead);
   line-height: 1.35;
   letter-spacing: -0.01em;
-  color: var(--ink-2);
+  color: var(--on-dark-soft);
 }
 .hero__actions {
   display: flex;
@@ -1058,12 +1192,26 @@ html:not(.js) .site-header {
   height: 100%;
   text-decoration: none;
 }
+/* A dashed construction line drawn around each building, as on the drawing. */
+.skyline__link::before {
+  content: '';
+  position: absolute;
+  inset: -8px -8px 0;
+  border: 1px dashed rgb(244 243 239 / 0.26);
+  border-bottom: 0;
+  pointer-events: none;
+  transition: border-color 0.5s;
+}
+.skyline__link:hover::before {
+  border-color: var(--red-on-dark);
+}
 .skyline__frame {
   position: absolute;
   inset: 0;
   display: block;
   overflow: hidden;
-  background: var(--paper-3);
+  background: var(--ink-3);
+  box-shadow: 0 30px 60px -30px rgb(3 3 5 / 0.9);
   transition:
     opacity 0.6s var(--ease-out),
     filter 0.6s var(--ease-out);
@@ -1106,7 +1254,7 @@ html:not(.js) .site-header {
   pointer-events: none;
 }
 .skyline__num {
-  color: var(--red);
+  color: var(--accent);
 }
 .skyline__place {
   width: 100%;
@@ -1122,18 +1270,18 @@ html:not(.js) .site-header {
 .ground {
   position: relative;
   display: block;
-  height: 1px;
-  background: var(--ink);
+  height: 2px;
+  background: var(--on-dark);
   transform-origin: left center;
 }
 .ground::before,
 .ground::after {
   content: '';
   position: absolute;
-  top: -5px;
-  width: 1px;
-  height: 11px;
-  background: var(--ink);
+  top: -6px;
+  width: 2px;
+  height: 14px;
+  background: var(--red-on-dark);
 }
 .ground::before {
   left: 0;
@@ -1213,7 +1361,16 @@ html:not(.js) .site-header {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   margin-top: clamp(48px, 5vw, 88px);
-  border-top: 1px solid var(--rule-strong);
+  padding-top: 10px;
+  border-top: 2px solid var(--ink);
+  /* A scale rule along the top: a tick every 16px, a longer red one every 80px. */
+  background-image:
+    repeating-linear-gradient(90deg, var(--red) 0 1px, transparent 1px 80px),
+    repeating-linear-gradient(90deg, rgb(13 13 17 / 0.45) 0 1px, transparent 1px 16px);
+  background-size:
+    100% 10px,
+    100% 5px;
+  background-repeat: no-repeat;
 }
 @media (min-width: 900px) {
   .figures {
@@ -1260,7 +1417,7 @@ html:not(.js) .site-header {
   font-family: var(--font-serif);
   font-style: italic;
   font-size: 0.5em;
-  color: var(--red);
+  color: var(--accent);
   vertical-align: top;
   line-height: 1;
   margin-left: 0.04em;
@@ -1302,7 +1459,11 @@ html:not(.js) .site-header {
   position: absolute;
   inset: 0 calc(var(--gutter) * -0.5);
   z-index: -1;
-  background: var(--ink);
+  background-color: var(--ink);
+  background-image:
+    linear-gradient(rgb(244 243 239 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(244 243 239 / 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
   transform: scaleY(0);
   transform-origin: top;
   transition: transform 0.7s var(--ease-out);
@@ -1314,13 +1475,30 @@ html:not(.js) .site-header {
 }
 .svc-row:hover,
 .svc-row:focus-visible {
-  color: var(--paper);
+  color: var(--on-dark);
 }
+/* The service number sits in a red ring that fills on hover. */
 .svc-row__num {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--red-ink);
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
-  letter-spacing: 0.08em;
-  color: var(--red);
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  transition:
+    background-color 0.5s var(--ease-out),
+    color 0.4s,
+    box-shadow 0.4s;
+}
+.svc-row:hover .svc-row__num,
+.svc-row:focus-visible .svc-row__num {
+  background: var(--red);
+  box-shadow: inset 0 0 0 1px var(--red);
+  color: var(--on-red);
 }
 .svc-row__name {
   font-size: var(--fs-h3);
@@ -1372,170 +1550,289 @@ html:not(.js) .site-header {
 }
 
 /* ------------------------------------------------------------------
-   03 Turnkey journey
+   03 Turnkey: the building goes up
    ------------------------------------------------------------------ */
 
-.journey {
+/* A drafting-board band: the drawing sits on graph paper, as on the desk. */
+.build {
   position: relative;
-  background: var(--ink);
-  color: var(--on-dark);
+  background-color: var(--paper-2);
+  background-image:
+    linear-gradient(rgb(13 13 17 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(13 13 17 / 0.06) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
-.journey__inner {
+.build__inner {
+  display: grid;
+  gap: clamp(32px, 4vw, 56px);
   padding-block: clamp(64px, 7vw, 112px);
 }
-/* Pinned: the whole section fits one screen, so nothing is cut off while it travels. */
-.journey.is-hscroll .journey__inner {
-  display: flex;
-  flex-direction: column;
-  height: 100svh;
-  padding-block: calc(var(--header-h) + 2vh) 4vh;
-}
-.journey.is-hscroll .eyebrow {
-  margin-bottom: 2vh;
-}
-.journey.is-hscroll .h2 {
-  font-size: min(var(--fs-h2), 8.5vh);
-}
-.journey.is-hscroll .journey__lede {
-  font-size: min(var(--fs-lead), 2.6vh);
-}
-
-.journey__head {
-  display: grid;
-  gap: 24px;
-  align-items: end;
-}
-@media (min-width: 960px) {
-  .journey__head {
-    grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-    gap: 8vw;
+@media (min-width: 1000px) {
+  .build__inner {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: center;
+    column-gap: 4vw;
   }
 }
-.journey__lede {
-  max-width: 40ch;
-  font-size: var(--fs-lead);
-  line-height: 1.4;
-  color: var(--on-dark-soft);
+/* Pinned: the whole section fits one screen while the building goes up. */
+.build.is-scrubbed .build__inner {
+  height: 100svh;
+  grid-template-rows: minmax(0, 1fr);
+  padding-block: calc(var(--header-h) + 2vh) 4vh;
 }
-.journey .accent {
-  color: var(--red-on-dark);
+.build.is-scrubbed .build__title {
+  font-size: min(var(--fs-h2), 8vh);
 }
 
-.journey__rail {
+.build__copy {
+  display: grid;
+  align-content: start;
+}
+.build__title .accent {
+  color: var(--accent);
+}
+.build__lede {
+  max-width: 40ch;
+  margin-top: clamp(16px, 2vw, 28px);
+  font-size: var(--fs-lead);
+  line-height: 1.4;
+  color: var(--graphite);
+}
+.build.is-scrubbed .build__lede {
+  font-size: min(var(--fs-lead), 2.4vh);
+}
+
+/* The six steps, with a rail that fills red as the building rises. */
+.build__steps-wrap {
   position: relative;
-  height: 1px;
-  margin-top: clamp(40px, 4vw, 64px);
-  background: var(--rule-dark);
+  margin-top: clamp(28px, 4vh, 48px);
+  padding-left: 22px;
 }
-.journey.is-hscroll .journey__rail {
-  margin-top: 4vh;
+.build__rail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--rule);
 }
-.journey__rail-fill {
+.build__rail-fill {
   position: absolute;
   inset: 0;
   background: var(--red);
-  transform-origin: left;
+  transform-origin: top;
 }
-.journey:not(.is-hscroll) .journey__rail-fill {
+.build:not(.is-scrubbed) .build__rail {
   display: none;
 }
-
-.journey__viewport {
-  overflow: hidden;
+.build:not(.is-scrubbed) .build__steps-wrap {
+  padding-left: 0;
 }
-.journey.is-hscroll .journey__viewport {
-  flex: 1 1 0;
-  min-height: 0;
-  display: flex;
-}
-.journey__track {
+.build__steps {
   list-style: none;
-  margin: 0 auto;
-  max-width: var(--max);
-  padding: 0 var(--gutter);
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-}
-@media (min-width: 640px) {
-  .journey__track {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 32px;
-  }
-}
-@media (min-width: 1000px) {
-  .journey__track {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}
-.journey.is-hscroll .journey__track {
-  display: flex;
-  flex: 0 0 100%;
-  min-width: 0;
-  max-width: none;
   margin: 0;
-  padding-inline: max(var(--gutter), calc((100% - var(--max)) / 2 + var(--gutter)));
-  will-change: transform;
+  padding: 0;
+  display: grid;
 }
-.journey.is-hscroll .journey__track::after {
-  content: '';
-  flex: 0 0 var(--gutter);
+.build__step {
+  display: grid;
+  grid-template-columns: 2.6rem minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid var(--rule);
 }
-
-.stage {
-  display: flex;
-  flex-direction: column;
-  padding: 28px 0 44px;
-  border-bottom: 1px solid var(--rule-dark);
+.build__step:last-child {
+  border-bottom: 1px solid var(--rule);
 }
-.journey.is-hscroll .stage {
-  flex: 0 0 clamp(320px, 27vw, 470px);
-  padding: 3vh 36px 0 28px;
-  border-bottom: 0;
-  border-left: 1px solid var(--rule-dark);
+.build__num {
+  padding-top: 0.45em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: 0.06em;
+  color: var(--graphite);
+  transition: color 0.4s;
 }
-.stage__num {
-  font-size: clamp(5rem, 3rem + 7vw, 11rem);
-  font-weight: 700;
-  font-variation-settings: 'wdth' 72;
-  letter-spacing: -0.05em;
-  line-height: 0.8;
-  color: transparent;
-  -webkit-text-stroke: 1px rgb(242 240 234 / 0.35);
-  transition:
-    color 0.6s var(--ease-out),
-    -webkit-text-stroke-color 0.6s;
-}
-.stage:hover .stage__num {
-  color: var(--red);
-  -webkit-text-stroke-color: var(--red);
-}
-.journey.is-hscroll .stage__num {
-  /* Large enough to fill the panel, so there is no empty band above the stage name. */
-  font-size: min(44vh, 20vw);
-  line-height: 0.78;
-  -webkit-text-stroke: 1.5px rgb(242 240 234 / 0.4);
-}
-.journey.is-hscroll .stage {
-  justify-content: center;
-}
-.journey.is-hscroll .stage__name {
-  margin-top: 0;
-  font-size: min(var(--fs-h3), 5vh);
-  padding-top: 4vh;
-}
-.stage__name {
-  margin-top: auto;
-  padding-top: 32px;
-  font-size: var(--fs-h3);
+.build__name {
+  font-size: clamp(1.2rem, 0.9rem + 0.8vw, 1.6rem);
   font-weight: 600;
   font-variation-settings: 'wdth' 80;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.025em;
+  line-height: 1.15;
 }
-.stage__text {
-  margin-top: 12px;
-  min-height: 3.1em;
-  max-width: 30ch;
-  color: var(--on-dark-soft);
+.build__text {
+  margin-top: 4px;
+  max-width: 38ch;
+  font-size: var(--fs-small);
+  color: var(--graphite);
+}
+.build__step.is-active .build__num {
+  color: var(--accent);
+}
+/* While scrubbing, only the current step is in full; its note opens beneath it. */
+.build.is-scrubbed .build__step {
+  padding: min(12px, 1.3vh) 0;
+  opacity: 0.38;
+  transition: opacity 0.4s;
+}
+.build.is-scrubbed .build__step.is-done {
+  opacity: 0.62;
+}
+.build.is-scrubbed .build__step.is-active {
+  opacity: 1;
+}
+.build.is-scrubbed .build__name {
+  font-size: min(clamp(1.2rem, 0.9rem + 0.8vw, 1.6rem), 3.1vh);
+}
+.build.is-scrubbed .build__text {
+  display: grid;
+  max-height: 0;
+  overflow: hidden;
+  margin-top: 0;
+  transition:
+    max-height 0.5s var(--ease-out),
+    margin-top 0.5s var(--ease-out);
+}
+.build.is-scrubbed .build__step.is-active .build__text {
+  max-height: 4.5em;
+  margin-top: 4px;
+}
+
+.build__figure {
+  position: relative;
+  margin: 0;
+  min-width: 0;
+}
+.build.is-scrubbed .build__figure {
+  align-self: stretch;
+  height: 100%;
+  min-height: 0;
+  padding-top: 28px;
+}
+.build__counter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--fs-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--graphite);
+}
+.build__count {
+  color: var(--accent);
+}
+
+/* The drawing (BuildingDrawing.tsx). */
+.bd {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+/* Pinned: the drawing scales to whatever height the screen leaves it. */
+.build.is-scrubbed .bd {
+  height: 100%;
+}
+.bd polygon,
+.bd polyline,
+.bd line,
+.bd ellipse,
+.bd circle {
+  stroke: var(--ink);
+  stroke-width: 0.9;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.bd polyline {
+  fill: none;
+}
+.bd .bd-top {
+  fill: var(--face-top);
+}
+.bd .bd-left {
+  fill: var(--face-left);
+}
+.bd .bd-right {
+  fill: var(--face-right);
+}
+.bd .bd-ground {
+  fill: var(--face-ground);
+}
+.bd .bd-glass {
+  fill: var(--face-glass);
+  stroke-width: 0.7;
+}
+.bd .bd-red {
+  fill: var(--red);
+}
+.bd .bd-red-deep {
+  fill: var(--red-band);
+}
+.bd .bd-shadow {
+  fill: rgb(13 13 17 / 0.08);
+  stroke: none;
+}
+.bd .bd-plot {
+  stroke: var(--red);
+  stroke-width: 1.2;
+  stroke-dasharray: 7 4;
+}
+.bd .bd-dash {
+  stroke: var(--graphite);
+  stroke-width: 0.8;
+  stroke-dasharray: 4 3;
+}
+.bd .bd-dash--fine {
+  stroke-dasharray: 2 3;
+}
+.bd .bd-axis {
+  stroke: var(--graphite-2);
+  stroke-width: 0.6;
+  stroke-dasharray: 10 3 2 3;
+}
+.bd .bd-bubble {
+  fill: var(--face-top);
+  stroke: var(--graphite);
+  stroke-width: 0.7;
+}
+.bd .bd-label {
+  font-family: var(--font-mono);
+  font-size: 7px;
+  fill: var(--graphite);
+}
+.bd .bd-frame {
+  stroke: var(--red);
+  stroke-width: 1;
+}
+.bd .bd-col {
+  stroke-width: 2.6;
+}
+.bd .bd-thin {
+  stroke-width: 0.6;
+}
+.bd .bd-trunk {
+  stroke-width: 1.4;
+}
+.bd .bd-tree {
+  fill: var(--face-left);
+}
+.bd .bd-crane {
+  stroke: var(--red);
+  stroke-width: 1.4;
+}
+.bd .bd-crane-thin {
+  stroke: var(--red);
+  stroke-width: 0.6;
+}
+.bd .bd-cable {
+  stroke-width: 0.6;
+}
+/* Temporary parts (the drawn outline, the crane) are gone once the building is finished. */
+.bd .bd-temp {
+  opacity: 0;
+  visibility: hidden;
 }
 
 /* ------------------------------------------------------------------
@@ -1597,6 +1894,42 @@ html:not(.js) .site-header {
   aspect-ratio: 4 / 5;
   background: var(--paper-3);
 }
+/* On hover an ink wash rises from the foot of the picture. */
+.pcard__media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(to top, rgb(13 13 17 / 0.7), rgb(13 13 17 / 0.1) 55%, transparent 80%);
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out);
+  pointer-events: none;
+}
+.pcard:hover .pcard__media::after {
+  opacity: 1;
+}
+/* Red corner marks, like crop marks on a print. */
+.pcard__media::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: 12px;
+  left: 12px;
+  width: 18px;
+  height: 18px;
+  border-top: 2px solid var(--red);
+  border-left: 2px solid var(--red);
+  opacity: 0;
+  transform: translate(6px, 6px);
+  transition:
+    opacity 0.4s,
+    transform 0.6s var(--ease-out);
+  pointer-events: none;
+}
+.pcard:hover .pcard__media::before {
+  opacity: 1;
+  transform: none;
+}
 .pcard--tall .pcard__media {
   aspect-ratio: 3 / 4;
 }
@@ -1638,7 +1971,7 @@ html:not(.js) .site-header {
   padding-top: 0.5em;
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
-  color: var(--red);
+  color: var(--accent);
 }
 .pcard__info > :not(.pcard__index) {
   grid-column: 2;
@@ -1741,7 +2074,11 @@ html:not(.js) .site-header {
    ------------------------------------------------------------------ */
 
 .people {
-  background: var(--paper-2);
+  background-color: var(--paper-2);
+  background-image:
+    linear-gradient(rgb(13 13 17 / 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(13 13 17 / 0.05) 1px, transparent 1px);
+  background-size: 32px 32px;
 }
 .people__grid {
   display: grid;
@@ -1793,26 +2130,52 @@ html:not(.js) .site-header {
   font-variation-settings: 'wdth' 100;
 }
 .roster__count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 3.2em;
+  height: 2em;
+  padding: 0 0.7em;
+  border-radius: 999px;
+  background: var(--ink);
   font-family: var(--font-mono);
   font-size: 0.85rem;
-  color: var(--red);
+  color: var(--on-dark);
+  transition: background-color 0.4s;
+}
+.roster__row:hover .roster__count {
+  background: var(--red);
+  color: var(--on-red);
 }
 
 /* ------------------------------------------------------------------
    06 Clients marquee
    ------------------------------------------------------------------ */
 
+/* The client list runs across a band of logo red. */
 .clients {
+  --graphite: var(--on-red-soft);
+  --rule: rgb(254 243 236 / 0.24);
+  --rule-dark: rgb(254 243 236 / 0.24);
+  --accent: var(--on-red);
+  --focus: var(--on-red);
   overflow: hidden;
   padding-block: clamp(64px, 7vw, 112px);
-  background: var(--ink);
-  color: var(--on-dark);
+  background-color: var(--red-band);
+  background-image:
+    radial-gradient(ellipse 60% 80% at 100% 0%, rgb(233 46 52 / 0.55), transparent 70%),
+    linear-gradient(rgb(254 243 236 / 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(254 243 236 / 0.06) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    32px 32px,
+    32px 32px;
+  color: var(--on-red);
 }
 .clients .accent {
-  color: var(--red-on-dark);
+  color: var(--on-red);
 }
 .clients .text-link:hover {
-  color: var(--red-on-dark);
+  color: var(--on-red);
 }
 .clients__strips {
   display: grid;
@@ -1833,7 +2196,7 @@ html:not(.js) .site-header {
   font-weight: 400;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--on-dark-soft);
+  color: var(--on-red-soft);
 }
 
 .marquee {
@@ -1867,7 +2230,7 @@ html:not(.js) .site-header {
   width: 0.16em;
   height: 0.16em;
   margin: 0 0.55em;
-  background: var(--red);
+  background: var(--ink);
   transform: rotate(45deg);
 }
 /* With motion: one line per strip, drifting. */
@@ -1893,7 +2256,7 @@ html:not(.js) .site-header {
 }
 .motion .marquee li:hover {
   color: transparent;
-  -webkit-text-stroke: 1px var(--on-dark);
+  -webkit-text-stroke: 1px var(--on-red);
 }
 
 /* ------------------------------------------------------------------
@@ -1920,7 +2283,7 @@ html:not(.js) .site-header {
   letter-spacing: -0.05em;
 }
 .closing__title .accent {
-  color: var(--red);
+  color: var(--accent);
 }
 
 /* Round call to action. */
@@ -1936,10 +2299,15 @@ html:not(.js) .site-header {
   aspect-ratio: 1;
   border-radius: 50%;
   background: var(--red);
-  color: #fff;
+  color: var(--on-red);
   font-weight: 500;
   text-decoration: none;
   text-align: center;
+  /* Drawn as a circle with an offset construction ring. */
+  box-shadow:
+    0 0 0 10px var(--paper),
+    0 0 0 11px rgb(197 17 32 / 0.45),
+    0 24px 50px -18px rgb(214 19 35 / 0.6);
 }
 .disc::before {
   content: '';
@@ -1966,7 +2334,7 @@ html:not(.js) .site-header {
 .closing__details {
   display: grid;
   margin-top: clamp(40px, 5vw, 80px);
-  border-top: 1px solid var(--rule-strong);
+  border-top: 2px solid var(--ink);
 }
 @media (min-width: 900px) {
   .closing__details {
@@ -2005,14 +2373,22 @@ html:not(.js) .site-header {
 .site-footer {
   overflow: hidden;
   padding: clamp(56px, 6vw, 96px) 0 var(--gutter);
-  background: var(--ink);
+  background-color: var(--ink);
+  background-image:
+    radial-gradient(ellipse 60% 70% at 15% 0%, rgb(58 58 66 / 0.5), transparent 70%),
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size:
+    100% 100%,
+    32px 32px,
+    32px 32px;
   color: var(--on-dark);
 }
 .site-footer a {
   text-decoration: none;
 }
 .site-footer a:hover {
-  color: var(--red-on-dark);
+  color: var(--accent);
 }
 .site-footer__mark {
   font-size: clamp(2.6rem, 13.5vw, 14.6rem);
@@ -2024,7 +2400,7 @@ html:not(.js) .site-header {
   margin-left: -0.04em;
 }
 .site-footer__mark .amp {
-  color: var(--red-on-dark);
+  color: var(--accent);
 }
 
 .title-block {
@@ -2100,8 +2476,9 @@ html:not(.js) .site-header {
    Inner page head
    ------------------------------------------------------------------ */
 
+/* Inner pages open on the same dark ground as the home page (see the dark-ground block at the top). */
 .page-head {
-  padding: calc(var(--header-h) + clamp(20px, 3vw, 48px)) 0 clamp(28px, 3.5vw, 56px);
+  padding: calc(var(--header-h) + clamp(20px, 3vw, 48px)) 0 clamp(40px, 4.5vw, 72px);
 }
 .page-head__annot {
   display: flex;
@@ -2111,7 +2488,7 @@ html:not(.js) .site-header {
   color: var(--graphite);
 }
 .page-head__annot span:first-child {
-  color: var(--red);
+  color: var(--accent);
 }
 .page-head__title {
   margin-top: clamp(16px, 2.5vw, 40px);
@@ -2121,7 +2498,7 @@ html:not(.js) .site-header {
   margin-left: -0.04em;
 }
 .page-head__title .accent {
-  color: var(--red);
+  color: var(--accent);
 }
 .page-head__main {
   display: grid;
@@ -2141,7 +2518,7 @@ html:not(.js) .site-header {
   max-width: 40ch;
   font-size: var(--fs-lead);
   line-height: 1.4;
-  color: var(--ink-2);
+  color: var(--on-dark-soft);
 }
 .page-head__foot {
   display: grid;
@@ -2193,7 +2570,7 @@ html:not(.js) .site-header {
   padding: 0 16px;
   border: 0;
   border-radius: 999px;
-  background: transparent;
+  background: var(--paper);
   box-shadow: inset 0 0 0 1px var(--rule);
   font-size: var(--fs-small);
   cursor: pointer;
@@ -2211,7 +2588,7 @@ html:not(.js) .site-header {
 }
 .filter[aria-pressed='true'] {
   background: var(--ink);
-  color: var(--paper);
+  color: var(--on-dark);
   box-shadow: inset 0 0 0 1px var(--ink);
 }
 .filter[aria-pressed='true'] sup {
@@ -2234,7 +2611,7 @@ html:not(.js) .site-header {
   letter-spacing: -0.03em;
 }
 .index__title sup {
-  color: var(--red);
+  color: var(--accent);
 }
 .index-table {
   width: 100%;
@@ -2281,7 +2658,7 @@ html:not(.js) .site-header {
   }
   .index-table tbody tr:hover th a {
     padding-left: 12px;
-    color: var(--red);
+    color: var(--accent);
   }
 }
 /* Row link covers the row. */
@@ -2379,10 +2756,10 @@ html:not(.js) .site-header {
   text-decoration: none;
 }
 .breadcrumb a:hover {
-  color: var(--red);
+  color: var(--accent);
 }
 .breadcrumb [aria-current] {
-  color: var(--ink);
+  color: var(--on-dark);
 }
 
 .case-head__title {
@@ -2536,7 +2913,11 @@ html:not(.js) .site-header {
   display: block;
   overflow: hidden;
   padding-block: clamp(48px, 6vw, 96px);
-  background: var(--ink);
+  background-color: var(--ink);
+  background-image:
+    linear-gradient(var(--grid-minor) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-minor) 1px, transparent 1px);
+  background-size: 32px 32px;
   color: var(--on-dark);
   text-decoration: none;
 }
@@ -2551,7 +2932,7 @@ html:not(.js) .site-header {
   font-size: var(--fs-mono);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--red-on-dark);
+  color: var(--accent);
 }
 .next-project__name {
   max-width: 14ch;
@@ -2633,10 +3014,10 @@ html:not(.js) .site-header {
 .jump-nav span {
   font-family: var(--font-mono);
   font-size: var(--fs-mono);
-  color: var(--red);
+  color: var(--accent);
 }
 .jump-nav a:hover {
-  color: var(--red);
+  color: var(--accent);
   transform: translateX(6px);
 }
 
@@ -2667,8 +3048,15 @@ html:not(.js) .site-header {
   letter-spacing: -0.05em;
   line-height: 0.8;
   color: transparent;
-  -webkit-text-stroke: 1px var(--graphite-2);
+  -webkit-text-stroke: 1.5px var(--ink);
   margin-bottom: 20px;
+  transition:
+    color 0.6s var(--ease-out),
+    -webkit-text-stroke-color 0.6s;
+}
+.svc-block:hover .svc-block__num {
+  color: var(--red);
+  -webkit-text-stroke-color: var(--red);
 }
 .svc-block__title {
   font-size: var(--fs-h3);
@@ -2851,7 +3239,7 @@ html:not(.js) .site-header {
   letter-spacing: -0.02em;
 }
 .team__title sup {
-  color: var(--red);
+  color: var(--accent);
 }
 .team__list {
   list-style: none;
@@ -2900,7 +3288,7 @@ html:not(.js) .site-header {
   color: var(--on-dark-soft);
 }
 .client-columns h3 sup {
-  color: var(--red-on-dark);
+  color: var(--accent);
 }
 .client-columns ul {
   list-style: none;
@@ -2916,11 +3304,11 @@ html:not(.js) .site-header {
     padding 0.5s var(--ease-out);
 }
 .client-columns li:hover {
-  color: var(--red-on-dark);
+  color: var(--accent);
   padding-left: 8px;
 }
 .section--dark .accent {
-  color: var(--red-on-dark);
+  color: var(--accent);
 }
 
 .strip-gallery {
@@ -3038,7 +3426,7 @@ html:not(.js) .site-header {
   transform-origin: bottom;
 }
 .contact-row:hover {
-  color: #fff;
+  color: var(--on-red);
 }
 .contact-row__num,
 .contact-row__label,
@@ -3049,18 +3437,18 @@ html:not(.js) .site-header {
   text-transform: uppercase;
 }
 .contact-row__num {
-  color: var(--red);
+  color: var(--accent);
   transition: color 0.4s;
 }
 .contact-row:hover .contact-row__num {
-  color: #fff;
+  color: var(--on-red);
 }
 .contact-row__label {
   color: var(--graphite);
   transition: color 0.4s;
 }
 .contact-row:hover .contact-row__label {
-  color: rgb(255 255 255 / 0.75);
+  color: var(--on-red);
 }
 .contact-row__value {
   grid-column: 2 / -1;

@@ -115,7 +115,7 @@ export function Hero({ buildings, established }: Props) {
             {established ? `, since ${established}` : ''}.
           </p>
           <div className="hero__actions">
-            <Link href="/projects" className="btn btn--ink" data-magnetic="0.25">
+            <Link href="/projects" className="btn btn--red" data-magnetic="0.25">
               <BtnLabel>See the work</BtnLabel>
             </Link>
             <Link href="/services" className="text-link">

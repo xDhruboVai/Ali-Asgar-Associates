@@ -46,7 +46,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#f2f0ea',
+  // The logo black every page opens on.
+  themeColor: 'rgb(13, 13, 17)',
 }
 
 /**

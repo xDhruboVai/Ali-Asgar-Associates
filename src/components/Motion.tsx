@@ -21,8 +21,9 @@ gsap.registerPlugin(ScrollTrigger)
  *   data-speed="0.2"               an element moving at its own pace (desktop)
  *   data-expand                    a frame widening to full bleed (scrubbed)
  *   data-count="400"               a number counting up
- *   data-hscroll                   a pinned horizontal track (desktop), with
- *                                  data-hscroll-pin / -track / -bar inside
+ *   data-build                     the turnkey building, assembled stage by
+ *                                  stage: pinned and scrubbed on wide screens,
+ *                                  played once on narrow ones (see construction())
  *   data-marquee="reverse?"        an endless strip that answers scroll speed
  *
  * Under prefers-reduced-motion none of this runs and every element is shown
@@ -262,42 +263,112 @@ function build() {
     })
   })
 
-  // The turnkey journey pins and travels sideways on wide screens.
-  mm.add('(min-width: 1000px)', () => {
-    all('[data-hscroll]').forEach((section) => {
-      const track = section.querySelector<HTMLElement>('[data-hscroll-track]')
-      // The pinned element sits inside the section, so the pin spacer GSAP inserts
-      // stays within markup React owns and unmounting the page is unaffected.
-      const pinned = section.querySelector<HTMLElement>('[data-hscroll-pin]')
-      if (!track || !pinned) return
-      section.classList.add('is-hscroll')
-      const distance = () => Math.max(0, track.scrollWidth - track.clientWidth)
-      // The section holds still for a while after pinning, so the heading and the
-      // first stages can be read before the track moves, and briefly at the end.
-      const HOLD_START = 0.35
-      const HOLD_END = 0.15
-      const tl = gsap.timeline({
-        scrollTrigger: {
+  // The turnkey building: pinned and built by the scroll on wide screens, built once on arrival elsewhere.
+  mm.add({ wide: '(min-width: 1000px)', narrow: '(max-width: 999px)' }, (context) => {
+    const wide = Boolean(context.conditions?.wide)
+    all('[data-build]').forEach((section) => {
+      const { tl, sync } = construction(section)
+      if (wide) {
+        const pinned = section.querySelector<HTMLElement>('[data-build-pin]')
+        section.classList.add('is-scrubbed')
+        ScrollTrigger.create({
           trigger: section,
           start: 'top top',
-          end: () => `+=${distance() * (1 + HOLD_START + HOLD_END) + window.innerHeight * 0.25}`,
+          end: () => `+=${window.innerHeight * 3}`,
+          // The pinned element sits inside the section, so the pin spacer GSAP inserts
+          // stays within markup React owns and unmounting the page is unaffected.
           pin: pinned,
           scrub: 0.8,
+          animation: tl,
           invalidateOnRefresh: true,
           // Measured before the triggers below it, which must include its pin spacing.
           refreshPriority: 1,
-        },
-      })
-      tl.to(track, { x: () => -distance(), ease: 'power1.inOut', duration: 1 }, HOLD_START)
-      const bar = section.querySelector('[data-hscroll-bar]')
-      if (bar) tl.fromTo(bar, { scaleX: 0 }, { scaleX: 1, ease: 'power1.inOut', duration: 1 }, HOLD_START)
-      tl.to({}, { duration: HOLD_END })
-      return () => section.classList.remove('is-hscroll')
+          // A jump past either end (a reload part-way down, an anchor link) skips the
+          // timeline's own updates, so the steps are set from the scroll position too.
+          onLeave: () => sync(1),
+          onLeaveBack: () => sync(0),
+          onRefresh: (self) => sync(self.progress),
+        })
+      } else {
+        tl.timeScale(1.5)
+        ScrollTrigger.create({
+          trigger: section.querySelector('.bd') ?? section,
+          start: 'top 75%',
+          once: true,
+          onEnter: () => tl.play(),
+        })
+      }
     })
+    return () => all('[data-build]').forEach((section) => section.classList.remove('is-scrubbed'))
   })
 
   return () => {
     cleanups.forEach((fn) => fn())
     mm.revert()
   }
+}
+
+const pad = (n: number) => String(n).padStart(2, '0')
+
+/**
+ * The building in the turnkey section going up, one time unit per stage of the
+ * journey (see BuildingDrawing.tsx for the parts): the plot, the grid, the
+ * drawn outline, the structure, the floors under a crane, then the walls and
+ * roof while the crane and the outline leave. The step list, counter and rail
+ * follow the timeline, whichever way it runs.
+ */
+function construction(section: HTMLElement) {
+  const q = gsap.utils.selector(section)
+  const steps = q<HTMLElement>('[data-build-step]')
+  const count = section.querySelector('[data-build-count]')
+  const label = section.querySelector('[data-build-label]')
+  const bar = section.querySelector('[data-build-bar]')
+  const floors = [...new Set(q<SVGElement>('[data-role="slab"]').map((el) => el.dataset.floor))]
+
+  let current = -1
+  const setStep = (i: number) => {
+    if (i === current) return
+    current = i
+    steps.forEach((el, n) => {
+      el.classList.toggle('is-active', n === i)
+      el.classList.toggle('is-done', n < i)
+    })
+    if (count) count.textContent = `${pad(i + 1)} / ${pad(steps.length)}`
+    if (label) label.textContent = steps[i]?.dataset.name ?? ''
+  }
+
+  const tl = gsap.timeline({ paused: true, defaults: { ease: 'power3.out', duration: 0.5 } })
+
+  // 1 Vision, 2 Planning: the plot and trees, then the grid, appear on the empty site.
+  tl.fromTo(q('[data-stage="1"]'), { autoAlpha: 0, y: 8 }, { autoAlpha: 1, y: 0, stagger: 0.15 }, 0)
+  tl.fromTo(q('[data-stage="2"]'), { autoAlpha: 0 }, { autoAlpha: 1 }, 1)
+  // 3 Design: the outline of the whole building is drawn.
+  tl.fromTo(q('[data-stage="3"]'), { autoAlpha: 0 }, { autoAlpha: 1, duration: 0.6 }, 2)
+  // 4 Engineering: pile caps, then the frame rising floor by floor.
+  tl.fromTo(q('[data-stage="4"]'), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, stagger: 0.14 }, 3)
+  // 5 Construction: the crane arrives, then columns and a slab for each floor.
+  tl.fromTo(q('[data-role="crane"]'), { autoAlpha: 0, y: 40 }, { autoAlpha: 1, y: 0, duration: 0.4 }, 4)
+  floors.forEach((floor, i) => {
+    const at = 4.15 + i * 0.2
+    tl.fromTo(
+      q(`[data-role="cols"][data-floor="${floor}"]`),
+      { scaleY: 0, transformOrigin: '50% 100%' },
+      { scaleY: 1, duration: 0.25 },
+      at,
+    )
+    tl.fromTo(q(`[data-role="slab"][data-floor="${floor}"]`), { autoAlpha: 0, y: -20 }, { autoAlpha: 1, y: 0, duration: 0.3 }, at + 0.12)
+  })
+  // 6 Completion: walls close in from the ground up, the roof goes on, the crane and outline go.
+  tl.fromTo(q('[data-role="walls"]'), { autoAlpha: 0, y: 10 }, { autoAlpha: 1, y: 0, stagger: 0.12, duration: 0.35 }, 5)
+  tl.fromTo(q('[data-role="roof"]'), { autoAlpha: 0, y: -14 }, { autoAlpha: 1, y: 0, duration: 0.35 }, 5.45)
+  tl.to(q('[data-role="crane"], [data-stage="3"]'), { autoAlpha: 0, duration: 0.3 }, 5.6)
+  if (bar) tl.fromTo(bar, { scaleY: 0 }, { scaleY: 1, ease: 'none', duration: 6 }, 0)
+  // Hold the finished building for a moment before the section unpins.
+  tl.to({}, { duration: 0.4 })
+
+  /** The step for a point in the timeline, given as progress from 0 to 1. */
+  const sync = (progress: number) => setStep(Math.min(steps.length - 1, Math.floor(progress * tl.duration())))
+  tl.eventCallback('onUpdate', () => sync(tl.progress()))
+  sync(0)
+  return { tl, sync }
 }
