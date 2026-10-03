@@ -4,7 +4,7 @@ import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import Lenis from 'lenis'
 import { usePathname } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -28,6 +28,11 @@ gsap.registerPlugin(ScrollTrigger)
  *
  * Under prefers-reduced-motion none of this runs and every element is shown
  * in its final state (the hidden starting states only exist under `.motion`).
+ *
+ * It also decides where each new page opens (see placeScroll): at the top
+ * after following a link, at the target of a #hash link, and where the reader
+ * left off after Back or Forward. Smooth scrolling keeps its own position,
+ * so without this a new page could open wherever the last one was.
  */
 
 let lenis: Lenis | null = null
@@ -39,6 +44,29 @@ const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: r
 
 export function Motion() {
   const pathname = usePathname()
+  // Where the reader was on each page, for Back and Forward.
+  const positions = useRef(new Map<string, number>())
+  const pageKey = useRef('')
+  const fromHistory = useRef(false)
+  const visited = useRef(false)
+
+  // Remember the scroll position of the page being left.
+  useEffect(() => {
+    const save = () => positions.current.set(pageKey.current, window.scrollY)
+    const onClick = (e: MouseEvent) => {
+      if (e.target instanceof Element && e.target.closest('a[href]')) save()
+    }
+    const onPopState = () => {
+      save()
+      fromHistory.current = true
+    }
+    document.addEventListener('click', onClick, true)
+    window.addEventListener('popstate', onPopState)
+    return () => {
+      document.removeEventListener('click', onClick, true)
+      window.removeEventListener('popstate', onPopState)
+    }
+  }, [])
 
   // Smooth scrolling, once for the whole visit.
   useEffect(() => {
@@ -65,9 +93,22 @@ export function Motion() {
 
   // Choreography for the page that is showing.
   useEffect(() => {
-    if (prefersReducedMotion()) return
+    const key = window.location.pathname + window.location.search
+    pageKey.current = key
+    // The first page of a visit keeps the browser's own position (a reload, a deep link).
+    const navigated = visited.current
+    visited.current = true
+    const restore = fromHistory.current ? (positions.current.get(key) ?? 0) : null
+    fromHistory.current = false
+
+    if (prefersReducedMotion()) {
+      if (navigated) placeScroll(restore)
+      return
+    }
 
     const ctx = gsap.context(build)
+    // Placed after the choreography is built, so pinned sections already have their full height.
+    if (navigated) placeScroll(restore)
     const refresh = () => ScrollTrigger.refresh()
     document.fonts?.ready.then(refresh)
     window.addEventListener('load', refresh)
@@ -79,6 +120,22 @@ export function Motion() {
   }, [pathname])
 
   return null
+}
+
+/**
+ * Opens a newly shown page at the right place: a remembered position (Back,
+ * Forward), else the element named by the #hash, else the top.
+ */
+function placeScroll(restore: number | null) {
+  let y = restore ?? 0
+  const hash = window.location.hash.slice(1)
+  if (restore === null && hash) {
+    const target = document.getElementById(decodeURIComponent(hash))
+    if (target) y = target.getBoundingClientRect().top + window.scrollY - 96
+  }
+  if (lenis) lenis.scrollTo(y, { immediate: true, force: true })
+  else window.scrollTo(0, y)
+  ScrollTrigger.update()
 }
 
 const all = <T extends HTMLElement = HTMLElement>(selector: string) => gsap.utils.toArray<T>(selector)
